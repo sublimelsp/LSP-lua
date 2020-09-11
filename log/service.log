@@ -1,0 +1,266 @@
+[2020-09-11 14:52:25.000][info][main:14]: Lua Lsp startup, root: 	/home/raoul/.config/sublime-text-3/Packages/LSP-lua
+[2020-09-11 14:52:25.000][debug][main:15]: ROOT:	/home/raoul/.config/sublime-text-3/Packages/LSP-lua
+[2020-09-11 14:52:25.046][info][script.language:125]: VSC language: en-us
+[2020-09-11 14:52:25.046][info][script.language:126]: LS  language: en-us
+[2020-09-11 14:52:25.155][debug][script.async.async:55]: Create thread, id: 	1	task: 	proto
+[2020-09-11 14:52:25.167][debug][script.service:868]: collectgarbage: 	0.012
+[2020-09-11 14:52:25.167][debug][script.service:939]: 
+State
+Main Mem:  [8097.629]kb
+#001 Mem:  <Unknown>
+-------------------
+CachedVM:  [0]
+AlivedVM:  [0]
+DeadVM:    [0]
+-------------------
+CachedSrc: [0]
+AlivedSrc: [1]
+DeadSrc:   [0]
+-------------------
+CachedFunc:[0]
+AlivedFunc:[0]
+DeadFunc:  [0]
+-------------------
+TotalVal:  [0]
+DeadVal:   [0]
+-------------------
+TotalLoc:  [0]
+TotalEmmy: [10]
+
+[2020-09-11 14:52:25.167][debug][script.service:981]: test memory: 	0.000
+[2020-09-11 14:52:25.169][info][script.method.initialize:22]: {
+	capabilities = {
+		textDocument = {
+			codeAction = {
+				codeActionLiteralSupport = {
+					codeActionKind = {
+						valueSet = {
+							[1] = "quickfix",
+							[2] = "refactor",
+							[3] = "refactor.extract",
+							[4] = "refactor.inline",
+							[5] = "refactor.rewrite",
+							[6] = "source.organizeImports",
+						},
+					},
+				},
+				dynamicRegistration = true,
+			},
+			colorProvider = {
+				dynamicRegistration = true,
+			},
+			completion = {
+				completionItem = {
+					deprecatedSupport = true,
+					documentationFormat = {
+						[1] = "markdown",
+						[2] = "plaintext",
+					},
+					snippetSupport = true,
+					tagSupport = {
+						valueSet = {
+							[1] = 1,
+						},
+					},
+				},
+				completionItemKind = {
+					valueSet = {
+						[01] = 1,
+						[02] = 2,
+						[03] = 3,
+						[04] = 4,
+						[05] = 5,
+						[06] = 6,
+						[07] = 7,
+						[08] = 8,
+						[09] = 9,
+						[10] = 10,
+						[11] = 11,
+						[12] = 12,
+						[13] = 13,
+						[14] = 14,
+						[15] = 15,
+						[16] = 16,
+						[17] = 17,
+						[18] = 18,
+						[19] = 19,
+						[20] = 20,
+						[21] = 21,
+						[22] = 22,
+						[23] = 23,
+						[24] = 24,
+						[25] = 25,
+					},
+				},
+				dynamicRegistration = true,
+			},
+			declaration = {
+				dynamicRegistration = true,
+				linkSupport = true,
+			},
+			definition = {
+				dynamicRegistration = true,
+				linkSupport = true,
+			},
+			documentHighlight = {
+				dynamicRegistration = true,
+			},
+			documentSymbol = {
+				["hierarchicalDocumentSymbolSupport"] = true,
+				dynamicRegistration = true,
+				symbolKind = {
+					valueSet = {
+						[01] = 1,
+						[02] = 2,
+						[03] = 3,
+						[04] = 4,
+						[05] = 5,
+						[06] = 6,
+						[07] = 7,
+						[08] = 8,
+						[09] = 9,
+						[10] = 10,
+						[11] = 11,
+						[12] = 12,
+						[13] = 13,
+						[14] = 14,
+						[15] = 15,
+						[16] = 16,
+						[17] = 17,
+						[18] = 18,
+						[19] = 19,
+						[20] = 20,
+						[21] = 21,
+						[22] = 22,
+						[23] = 23,
+						[24] = 24,
+						[25] = 25,
+						[26] = 26,
+					},
+				},
+			},
+			formatting = {
+				dynamicRegistration = true,
+			},
+			hover = {
+				contentFormat = {
+					[1] = "markdown",
+					[2] = "plaintext",
+				},
+				dynamicRegistration = true,
+			},
+			implementation = {
+				dynamicRegistration = true,
+				linkSupport = true,
+			},
+			publishDiagnostics = {
+				relatedInformation = true,
+			},
+			rangeFormatting = {
+				dynamicRegistration = true,
+			},
+			references = {
+				dynamicRegistration = true,
+			},
+			rename = {
+				dynamicRegistration = true,
+				prepareSupport = true,
+			},
+			selectionRange = {
+				dynamicRegistration = true,
+			},
+			signatureHelp = {
+				dynamicRegistration = true,
+				signatureInformation = {
+					documentationFormat = {
+						[1] = "markdown",
+						[2] = "plaintext",
+					},
+					parameterInformation = {
+						labelOffsetSupport = true,
+					},
+				},
+			},
+			synchronization = {
+				didSave = true,
+				dynamicRegistration = true,
+				willSave = true,
+				willSaveWaitUntil = true,
+			},
+			typeDefinition = {
+				dynamicRegistration = true,
+				linkSupport = true,
+			},
+		},
+		window = {
+			workDoneProgress = true,
+		},
+		workspace = {
+			applyEdit = true,
+			configuration = true,
+			didChangeConfiguration = {
+				dynamicRegistration = true,
+			},
+			executeCommand = {
+			},
+			symbol = {
+				dynamicRegistration = true,
+				symbolKind = {
+					valueSet = {
+						[01] = 1,
+						[02] = 2,
+						[03] = 3,
+						[04] = 4,
+						[05] = 5,
+						[06] = 6,
+						[07] = 7,
+						[08] = 8,
+						[09] = 9,
+						[10] = 10,
+						[11] = 11,
+						[12] = 12,
+						[13] = 13,
+						[14] = 14,
+						[15] = 15,
+						[16] = 16,
+						[17] = 17,
+						[18] = 18,
+						[19] = 19,
+						[20] = 20,
+						[21] = 21,
+						[22] = 22,
+						[23] = 23,
+						[24] = 24,
+						[25] = 25,
+						[26] = 26,
+					},
+				},
+			},
+			workspaceEdit = {
+				documentChanges = true,
+				failureHandling = "abort",
+			},
+			workspaceFolders = true,
+		},
+	},
+	clientInfo = {
+		name = "Sublime Text LSP",
+		version = "1.0.12",
+	},
+	initializationOptions = {
+	},
+	processId = 16174,
+	rootPath = "/home/raoul/.config/sublime-text-3/Packages/LSP-lua",
+	rootUri = "file:///home/raoul/.config/sublime-text-3/Packages/LSP-lua",
+	workspaceFolders = {
+		[1] = {
+			name = "LSP-lua",
+			uri = "file:///home/raoul/.config/sublime-text-3/Packages/LSP-lua",
+		},
+	},
+}
+[2020-09-11 14:52:25.170][info][script.service:180]: Add workspace	LSP-lua	file:///home/raoul/.config/sublime-text-3/Packages/LSP-lua
+[2020-09-11 14:52:25.170][debug][script.async.async:55]: Create thread, id: 	2	task: 	loadfile
+[2020-09-11 14:52:25.170][info][script.workspace:145]: Workspace inited, root: 	/home/raoul/.config/sublime-text-3/Packages/LSP-lua
+[2020-09-11 14:52:25.170][info][script.workspace:146]: Workspace inited, uri: 	file:///home/raoul/.config/sublime-text-3/Packages/LSP-lua
+[2020-09-11 14:52:25.170][info][script.workspace:148]: Log path: 	/home/raoul/.config/sublime-text-3/Packages/LSP-lua/log/file_home_raoul_.config_sublime-text-3_Packages_LSP-lua.log
