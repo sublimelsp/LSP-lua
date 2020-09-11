@@ -1,0 +1,48 @@
+{
+    // possible values: en-US, zh-CN
+    "locale": "en-US",
+    "command": [
+        "${packages}/LSP-lua/bin/${binplatform}/lua-language-server",
+        "-E",
+        "-e",
+        "LANG=\"${locale}\"",
+        "${packages}/LSP-lua/main.lua"
+    ],
+    "languages": [
+        {
+            "languageId": "lua"
+        }
+    ],
+    "settings": {
+        // possible values: Disable, Both, Replace
+        "Lua.completion.callSnippet": "Disable",
+        "Lua.completion.displayContext": 6,
+        "Lua.completion.enable": true,
+        // possible values: Disable, Both, Replace
+        "Lua.completion.keywordSnippet": "Replace",
+        "Lua.diagnostics.disable": [],
+        "Lua.diagnostics.enable": true,
+        "Lua.diagnostics.globals": [],
+        "Lua.diagnostics.severity": {},
+        "Lua.hover.enable": true,
+        "Lua.hover.viewNumber": true,
+        "Lua.hover.viewString": true,
+        "Lua.hover.viewStringMax": 1000,
+        "Lua.runtime.path": [
+            "?.lua",
+            "?/init.lua",
+            "?/?.lua"
+        ],
+        // possible values: Lua 5.1, Lua 5.2, Lua 5.3, Lua 5.4, LuaJIT
+        "Lua.runtime.version": "Lua 5.3",
+        "Lua.signatureHelp.enable": true,
+        "Lua.workspace.ignoreDir": [
+            ".vscode"
+        ],
+        "Lua.workspace.ignoreSubmodules": true,
+        "Lua.workspace.library": {},
+        "Lua.workspace.maxPreload": 300,
+        "Lua.workspace.preloadFileSize": 100,
+        "Lua.workspace.useGitIgnore": true
+    }
+}
