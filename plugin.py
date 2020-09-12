@@ -15,7 +15,4 @@ class Lua(AbstractPlugin):
                 "windows": "Windows",
                 "osx": "macOS"
         }[sublime.platform()]
-        return {
-            "binplatform": binplatform,
-            "locale": str(sublime.load_settings("LSP-lua.sublime-settings").get("locale"))
-        }
+        return {"binplatform": binplatform}
