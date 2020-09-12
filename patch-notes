@@ -1,0 +1,7 @@
+- The binary versions git-tag and language server git-commit are in the `snapshot` file
+- Make sure the binary files have the executable flag set
+- Make sure files in log/ are not committed
+- Remove \*-beta files
+- Remove \*make\* files
+- Remove debugger.lua
+- Comment out the line `xpcall(dofile, log.debug, rootPath .. '/debugger.lua')` in main.lua
