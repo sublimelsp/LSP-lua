@@ -1,16 +1,22 @@
 from LSP.plugin import AbstractPlugin
-from LSP.plugin.core.typing import Dict, Optional
+from LSP.plugin.core.typing import Dict, Optional, Tuple
 import sublime
 
 
 class Lua(AbstractPlugin):
     @classmethod
     def name(cls) -> str:
-        return cls.__name__.lower()
+        return "LSP-{}".format(cls.__name__.lower())
+
+    @classmethod
+    def configuration(cls) -> Tuple[sublime.Settings, str]:
+        base_name = "{}.sublime-settings".format(cls.name())
+        file_path = "Packages/{}/{}".format(cls.name(), base_name)
+        return sublime.load_settings(base_name), file_path
 
     @classmethod
     def additional_variables(cls) -> Optional[Dict[str, str]]:
-        settings = sublime.load_settings("LSP-lua.sublime-settings")
+        settings, _ = cls.configuration()
         locale = str(settings.get("locale"))
         binplatform = {
             "linux": "Linux",
