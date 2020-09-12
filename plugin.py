@@ -10,9 +10,14 @@ class Lua(AbstractPlugin):
 
     @classmethod
     def additional_variables(cls) -> Optional[Dict[str, str]]:
+        settings = sublime.load_settings("LSP-lua.sublime-settings")
+        locale = str(settings.get("locale"))
         binplatform = {
-                "linux": "Linux",
-                "windows": "Windows",
-                "osx": "macOS"
+            "linux": "Linux",
+            "windows": "Windows",
+            "osx": "macOS"
         }[sublime.platform()]
-        return {"binplatform": binplatform}
+        return {
+            "binplatform": binplatform,
+            "locale": locale
+        }

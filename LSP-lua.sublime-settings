@@ -1,6 +1,11 @@
 {
+    // possible values: en-US, zh-CN
+    "locale": "en-US",
     "command": [
         "${packages}/LSP-lua/bin/${binplatform}/lua-language-server",
+        "-E",
+        "-e",
+        "LANG=\"${locale}\"",
         "${packages}/LSP-lua/main.lua"
     ],
     "languages": [
