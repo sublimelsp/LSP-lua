@@ -7,7 +7,7 @@ function process
 {
     local OUT_DIR="${GITHUB_WORKSPACE}/out/LSP-lua-$1"
     local BIN_DIR="${VSCODE_LUA_DIR}/bin/$2"
-    mkdir -p out/$1
+    mkdir -p "${OUT_DIR}"
     pushd "${OUT_DIR}"
         mkdir -p bin/$2
         cp "${BIN_DIR}"/* bin/$2/
