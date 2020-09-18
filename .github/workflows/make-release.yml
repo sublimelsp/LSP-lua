@@ -9,17 +9,32 @@ on:
       - master
 
 jobs:
-  make-linux-release:
+  Ubuntu 16.04:
     runs-on: ubuntu-16.04
     steps:
-      - run: echo "hello from Ubuntu 16"
+      - uses: actions/checkout@v2
+        with:
+          repository: sumneko/vscode-lua
+          ref: v0.20.6
+          submodules: recursive
+      - run: echo "hello from linux"
 
-  make-macos-release:
+  macOS 10.15:
     runs-on: macos-10.15
     steps:
-      - run: echo "hello from macOS 10.15"
+      - uses: actions/checkout@v2
+        with:
+          repository: sumneko/vscode-lua
+          ref: v0.20.6
+          submodules: recursive
+      - run: echo "hello from macos-10.15"
 
-  make-windows-release:
+  Windows 2019:
     runs-on: windows-2019
     steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: sumneko/vscode-lua
+          ref: v0.20.6
+          submodules: recursive
       - run: write-output "hello from windows server 2019"
