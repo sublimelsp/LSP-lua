@@ -1,0 +1,11 @@
+--- a/main.lua	2020-09-18 23:18:39.946714120 +0200
++++ b/main.lua	2020-09-18 23:19:14.766667638 +0200
+@@ -15,7 +15,7 @@
+ log.debug('ROOT:', ROOT:string())
+ ac = {}
+ 
+-xpcall(dofile, log.debug, rootPath .. '/debugger.lua')
++--xpcall(dofile, log.debug, rootPath .. '/debugger.lua')
+ require 'utility'
+ local service = require 'service'
+ local session = service()

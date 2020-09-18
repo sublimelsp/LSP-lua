@@ -26,18 +26,9 @@ function process
     pushd "${OUT_DIR}"
         zip -q -r "${GITHUB_WORKSPACE}/LSP-lua-$1.zip" .
     popd # "${OUT_DIR}"
+    ls -lash "${GITHUB_WORKSPACE}/LSP-lua-$1.zip"
 }
 
 process linux Linux
 process osx macOS
 process windows Windows
-
-ls -lash LSP-lua-linux.zip
-ls -lash LSP-lua-osx.zip
-ls -lash LSP-lua-windows.zip
-
-# testing
-mkdir test
-cd test
-unzip ../LSP-lua-linux.zip
-ls -lash
