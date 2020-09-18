@@ -1,0 +1,69 @@
+name: Make
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  Release:
+    runs-on: ubuntu-16.04
+    steps:
+
+      - name: Clone the vscode-lua repository
+        uses: actions/checkout@v2
+        with:
+          repository: sumneko/vscode-lua
+          path: vscode-lua
+          ref: v0.20.6
+          submodules: recursive
+
+      - name: Clone the LSP-lua repository
+        uses: actions/checkout@v2
+        with:
+          repository: sublimelsp/LSP-lua
+          path: LSP-lua-source
+
+      - name: Create the release files
+        run: bash LSP-lua-source/make.sh
+
+      - name: Create release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Linux Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./LSP-lua-linux.zip
+          asset_name: LSP-lua-linux.zip
+          asset_content_type: application/zip
+
+      - name: Upload macOS Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./LSP-lua-osx.zip
+          asset_name: LSP-lua-osx.zip
+          asset_content_type: application/zip
+
+      - name: Upload Windows Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./LSP-lua-windows.zip
+          asset_name: LSP-lua-windows.zip
+          asset_content_type: application/zip
