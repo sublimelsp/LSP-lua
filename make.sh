@@ -1,3 +1,5 @@
+set -e
+
 ls -R vscode-lua
 ls -R LSP-lua-source
 
