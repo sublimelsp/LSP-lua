@@ -1,5 +1,6 @@
 name: Make
 
+# This is temporarily for testing purposes.
 on:
   push:
     branches:
@@ -8,21 +9,25 @@ on:
     branches:
       - master
 
+# It should eventually trigger only when a tag is pushed:
+# on:
+#   push:
+#     tags:
+#     - '*'
+
 jobs:
   Release:
     runs-on: ubuntu-16.04
-    env:
-      BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
     steps:
       - uses: actions/checkout@v2
         with:
           repository: sumneko/vscode-lua
+          path: vscode-lua
           ref: v0.20.6
           submodules: recursive
       - uses: actions/checkout@v2
         with:
           repository: sublimelsp/LSP-lua
-          ref: v0.20.6
-      - uses: jfrog/setup-jfrog-cli@v1
-      - run: jfrog --version
-      - run: jfrog bt package-show --user rwols --key $BINTRAY_API_KEY rwols/LSP-lua/linux
+          path: LSP-lua-source
+          ref: ${{ env.GIT_TAG }}
+      - run: bash make.sh
