@@ -1,0 +1,25 @@
+name: Make Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  make-linux-release:
+    runs-on: ubuntu-16.04
+    steps:
+      - run: echo "hello from Ubuntu 16"
+
+  make-macos-release:
+    runs-on: macos-10.15
+    steps:
+      - run: echo "hello from macOS 10.15"
+
+  make-windows-release:
+    runs-on: windows-2019
+    steps:
+      - run: write-output "hello from windows server 2019"
