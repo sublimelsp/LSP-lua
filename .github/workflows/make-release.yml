@@ -1,4 +1,4 @@
-name: Make Release
+name: Make
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  Linux:
+  Release:
     runs-on: ubuntu-16.04
     env:
       BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
@@ -19,10 +19,10 @@ jobs:
           repository: sumneko/vscode-lua
           ref: v0.20.6
           submodules: recursive
-      # - uses: actions/checkout@v2
-      #   with:
-      #     repository: sublimelsp/LSP-lua
-      #     ref: v0.20.6
+      - uses: actions/checkout@v2
+        with:
+          repository: sublimelsp/LSP-lua
+          ref: v0.20.6
       - uses: jfrog/setup-jfrog-cli@v1
       - run: jfrog --version
       - run: jfrog bt package-show --user rwols --key $BINTRAY_API_KEY rwols/LSP-lua/linux
