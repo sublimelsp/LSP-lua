@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  Ubuntu 16.04:
+  Linux:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
           submodules: recursive
       - run: echo "hello from linux"
 
-  macOS 10.15:
+  macOS:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
           submodules: recursive
       - run: echo "hello from macos-10.15"
 
-  Windows 2019:
+  Windows:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v2
