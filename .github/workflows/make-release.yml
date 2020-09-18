@@ -17,7 +17,8 @@ jobs:
           repository: sumneko/vscode-lua
           ref: v0.20.6
           submodules: recursive
-      - run: echo "hello from linux"
+      - uses: jfrog/setup-jfrog-cli@v1
+      - run: jfrog --version
 
   macOS:
     runs-on: macos-10.15
@@ -27,7 +28,8 @@ jobs:
           repository: sumneko/vscode-lua
           ref: v0.20.6
           submodules: recursive
-      - run: echo "hello from macos-10.15"
+      - uses: jfrog/setup-jfrog-cli@v1
+      - run: jfrog --version
 
   Windows:
     runs-on: windows-2019
@@ -37,4 +39,5 @@ jobs:
           repository: sumneko/vscode-lua
           ref: v0.20.6
           submodules: recursive
-      - run: write-output "hello from windows server 2019"
+      - uses: jfrog/setup-jfrog-cli@v1
+      - run: jfrog --version
