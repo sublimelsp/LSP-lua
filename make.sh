@@ -13,8 +13,11 @@ function process
         mkdir -p bin/$2
         cp "${BIN_DIR}"/* bin/$2/
         chmod +x bin/$2/*
-        cp -R "${VSCODE_LUA_DIR}/server/scripts" .
+        cp -R "${VSCODE_LUA_DIR}/server/libs" .
+        cp -R "${VSCODE_LUA_DIR}/server/locale" .
+        cp -R "${VSCODE_LUA_DIR}/server/script" .
         cp "${VSCODE_LUA_DIR}/server/main.lua" .
+        cp -R "${VSCODE_LUA_DIR}/server/platform.lua" .
         cp "${LSP_LUA_SOURCE_DIR}/plugin.py" .
         cp "${LSP_LUA_SOURCE_DIR}/LSP-lua.sublime-commands" .
         cp "${LSP_LUA_SOURCE_DIR}/LSP-lua.sublime-settings" .
