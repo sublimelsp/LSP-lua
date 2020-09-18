@@ -23,7 +23,7 @@ function process
     cp "${LSP_LUA_SOURCE_DIR}/NOTICE" "${OUT_DIR}/"
     touch "${OUT_DIR}/.no-sublime-package"
     patch "${OUT_DIR}/main.lua" "${LSP_LUA_SOURCE_DIR}/patch.diff"
-    zip LSP-lua-$1.zip "${OUT_DIR}"
+    zip -r LSP-lua-$1.zip "${OUT_DIR}"
 }
 
 process linux Linux
