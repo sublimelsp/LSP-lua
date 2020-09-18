@@ -4,10 +4,10 @@ name: Make
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 # It should eventually trigger only when a tag is pushed:
 # on:
@@ -29,5 +29,4 @@ jobs:
         with:
           repository: sublimelsp/LSP-lua
           path: LSP-lua-source
-          ref: ${{ env.GIT_TAG }}
-      - run: bash LSP-lua-source/make.sh
+      - run: bash LSP-lua-source/make.sh vscode-lua LSP-lua-source
