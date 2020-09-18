@@ -1,8 +1,5 @@
 set -e
 
-ls -R vscode-lua
-ls -R LSP-lua-source
-
 VSCODE_LUA_DIR="${GITHUB_WORKSPACE}/vscode-lua"
 LSP_LUA_SOURCE_DIR="${GITHUB_WORKSPACE}/LSP-lua-source"
 
