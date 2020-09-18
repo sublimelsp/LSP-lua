@@ -54,6 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./LSP-lua-linux.zip
           asset_name: LSP-lua-linux.zip
           asset_content_type: application/zip
 
