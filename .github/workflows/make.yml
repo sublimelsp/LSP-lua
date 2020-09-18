@@ -30,4 +30,4 @@ jobs:
           repository: sublimelsp/LSP-lua
           path: LSP-lua-source
           ref: ${{ env.GIT_TAG }}
-      - run: bash make.sh
+      - run: bash LSP-lua-source/make.sh
