@@ -9,6 +9,7 @@ function process
     local BIN_DIR="${VSCODE_LUA_DIR}/bin/$2"
     mkdir -p "${OUT_DIR}"
     mkdir -p bin/$2
+    echo cp "${BIN_DIR}"/* bin/$2/
     cp "${BIN_DIR}"/* bin/$2/
     chmod +x bin/$2/*
     cp -R "${VSCODE_LUA_DIR}/server/libs" "${OUT_DIR}/"
