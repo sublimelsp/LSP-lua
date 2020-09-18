@@ -19,14 +19,31 @@ jobs:
   Release:
     runs-on: ubuntu-16.04
     steps:
-      - uses: actions/checkout@v2
+      - name: Clone the vscode-lua repository
+        uses: actions/checkout@v2
         with:
           repository: sumneko/vscode-lua
           path: vscode-lua
           ref: v0.20.6
           submodules: recursive
-      - uses: actions/checkout@v2
+      - name: Clone the LSP-lua repository
+        uses: actions/checkout@v2
         with:
           repository: sublimelsp/LSP-lua
           path: LSP-lua-source
-      - run: bash LSP-lua-source/make.sh
+      - name: Create the release files
+        run: bash LSP-lua-source/make.sh
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false
