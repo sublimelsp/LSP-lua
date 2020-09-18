@@ -1,0 +1,33 @@
+name: Make
+
+# This is temporarily for testing purposes.
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+# It should eventually trigger only when a tag is pushed:
+# on:
+#   push:
+#     tags:
+#     - '*'
+
+jobs:
+  Release:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: sumneko/vscode-lua
+          path: vscode-lua
+          ref: v0.20.6
+          submodules: recursive
+      - uses: actions/checkout@v2
+        with:
+          repository: sublimelsp/LSP-lua
+          path: LSP-lua-source
+          ref: ${{ env.GIT_TAG }}
+      - run: bash LSP-lua-source/make.sh
