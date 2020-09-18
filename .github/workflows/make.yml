@@ -1,19 +1,9 @@
 name: Make
 
-# This is temporarily for testing purposes.
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-# It should eventually trigger only when a tag is pushed:
-# on:
-#   push:
-#     tags:
-#     - 'v*'
+    tags:
+    - 'v*'
 
 jobs:
   Release:
