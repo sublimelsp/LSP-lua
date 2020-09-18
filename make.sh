@@ -1,7 +1,7 @@
 set -e
 
-VSCODE_LUA_DIR="${GITHUB_WORKSPACE}/$1"
-LSP_LUA_SOURCE_DIR="${GITHUB_WORKSPACE}/$2"
+VSCODE_LUA_DIR="${GITHUB_WORKSPACE}/vscode-lua"
+LSP_LUA_SOURCE_DIR="${GITHUB_WORKSPACE}/LSP-lua-source"
 
 function process
 {
@@ -29,6 +29,6 @@ process linux Linux
 process osx macOS
 process windows Windows
 
-ls -lash LSP-lua-linux.zip
-ls -lash LSP-lua-osx.zip
-ls -lash LSP-lua-windows.zip
+ls -lash LSP-lua-linux
+ls -lash LSP-lua-osx
+ls -lash LSP-lua-windows

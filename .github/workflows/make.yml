@@ -29,4 +29,4 @@ jobs:
         with:
           repository: sublimelsp/LSP-lua
           path: LSP-lua-source
-      - run: bash LSP-lua-source/make.sh vscode-lua LSP-lua-source
+      - run: bash LSP-lua-source/make.sh
