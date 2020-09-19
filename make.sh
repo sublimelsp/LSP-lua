@@ -6,7 +6,7 @@ LSP_LUA_SOURCE_DIR="${GITHUB_WORKSPACE}/LSP-lua-source"
 function process
 {
     local OUT_DIR="${GITHUB_WORKSPACE}/out/LSP-lua-$1"
-    local OUT_BIN_DIR="${OUT_DIR}/bin/$1"
+    local OUT_BIN_DIR="${OUT_DIR}/bin/$2"
     local BIN_DIR="${VSCODE_LUA_DIR}/bin/$2"
     mkdir -p "${OUT_BIN_DIR}"
     cp "${BIN_DIR}"/* "${OUT_BIN_DIR}"/
