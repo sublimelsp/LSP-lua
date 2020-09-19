@@ -1,9 +1,9 @@
 name: Make
 
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+    - 'v*'
 
 jobs:
   Release:
