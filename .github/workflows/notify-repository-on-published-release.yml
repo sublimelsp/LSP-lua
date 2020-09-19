@@ -8,9 +8,13 @@ jobs:
   notify:
     runs-on: ubuntu-16.04
     steps:
+      - name: Dump Event Context
+        env:
+          EVENT_DUMP: ${{ toJson(github.event) }}
+        run: echo "$EVENT_DUMP"
       - name: Notify repository
         run: |
           curl -X POST https://api.github.com/repos/sublimelsp/repository/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ secrets.GITHUB_TOKEN }} \
-          --data '{"event_type": "lsp-add-or-update-package", "client_payload": { "name": "LSP-lua", "details": "https://github.com/sublimelsp/LSP-lua", "releases": {["sublime_text": ">=4070", "platforms": "linux-x64", "version": "0.0.3", "url": "foo.com"]}}}'
+          --data '{"event_type": "lsp-add-or-update-package", "client_payload": {"name": "LSP-lua", "details": "https://github.com/sublimelsp/LSP-lua", "releases": [{"sublime_text": ">=4070", "platforms": "linux-x64", "version": "0.0.3", "url": "foo.com"}]}}'
