@@ -1,0 +1,16 @@
+name: Notify Repository on Published Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Notify repository
+        run: |
+          curl -X POST https://api.github.com/repos/sublimelsp/repository/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u ${{ secrets.GITHUB_TOKEN }} \
+          --data '{"event_type": "lsp-add-or-update-package", "client_payload": { "name": "${{ github.event.repository.name }}", "repository": "$GITHUB_REPOSITORY" }}'
