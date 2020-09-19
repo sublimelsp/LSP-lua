@@ -42,6 +42,10 @@ jobs:
           release_name: Release ${{ github.event.inputs.semver }}
           draft: true
           prerelease: false
+          body: |
+            This release contains version
+            ${{ github.event.inputs.vscode-lua-git-tag }} of the lua language
+            server.
 
       - name: Upload Linux Release
         uses: actions/upload-release-asset@v1
