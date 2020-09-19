@@ -1,9 +1,14 @@
 name: Make
 
 on:
-  push:
-    tags:
-    - 'v*'
+  workflow_dispatch:
+    inputs:
+      vscode-lua-git-tag:
+        description: Git tag to check out for the vscode-lua repo
+        required: true
+      semver:
+        description: Semantic version to release
+        required: true
 
 jobs:
   Release:
@@ -15,7 +20,7 @@ jobs:
         with:
           repository: sumneko/vscode-lua
           path: vscode-lua
-          ref: v0.20.6
+          ref: ${{ github.event.inputs.vscode-lua-git-tag }}
           submodules: recursive
 
       - name: Clone the LSP-lua repository
@@ -33,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.event.inputs.semver }}
+          release_name: Release ${{ github.event.inputs.semver }}
           draft: true
           prerelease: false
 
