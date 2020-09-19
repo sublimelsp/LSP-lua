@@ -16,5 +16,5 @@ jobs:
         run: |
           curl -X POST https://api.github.com/repos/sublimelsp/repository/dispatches \
           -H 'Accept: application/vnd.github.v3+json' \
-          -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'' \
+          -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
           --data '{"event_type": "lsp-add-or-update-package", "client_payload": {"name": "LSP-lua", "details": "https://github.com/sublimelsp/LSP-lua", "releases": [{"sublime_text": ">=4070", "platforms": "linux-x64", "version": "0.0.3", "url": "foo.com"}]}}'
