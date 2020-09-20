@@ -50,8 +50,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua-linux.zip
-          asset_name: LSP-lua-linux.zip
+          asset_path: ./LSP-lua_linux-x64.zip
+          asset_name: LSP-lua_linux-x64.zip
           asset_content_type: application/zip
 
       - name: Upload macOS Release
@@ -60,8 +60,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua-osx.zip
-          asset_name: LSP-lua-osx.zip
+          asset_path: ./LSP-lua_osx-x64.zip
+          asset_name: LSP-lua_osx-x64.zip
           asset_content_type: application/zip
 
       - name: Upload Windows Release
@@ -70,6 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua-windows.zip
-          asset_name: LSP-lua-windows.zip
+          asset_path: ./LSP-lua_windows-x64.zip
+          asset_name: LSP-lua_windows-x64.zip
           asset_content_type: application/zip
