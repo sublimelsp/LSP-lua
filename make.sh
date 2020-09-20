@@ -24,9 +24,9 @@ function process
     touch "${OUT_DIR}/.no-sublime-package"
     patch "${OUT_DIR}/main.lua" "${LSP_LUA_SOURCE_DIR}/patch.diff"
     pushd "${OUT_DIR}"
-        zip -q -r "${GITHUB_WORKSPACE}/LSP-lua-$1.zip" .
+        zip -q -r "${GITHUB_WORKSPACE}/LSP-lua_$1.zip" .
     popd # "${OUT_DIR}"
-    ls -lash "${GITHUB_WORKSPACE}/LSP-lua-$1.zip"
+    ls -lash "${GITHUB_WORKSPACE}/LSP-lua_$1.zip"
 }
 
 process linux-x64 Linux
