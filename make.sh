@@ -5,7 +5,7 @@ LSP_LUA_SOURCE_DIR="${GITHUB_WORKSPACE}/LSP-lua-source"
 
 function process
 {
-    local OUT_DIR="${GITHUB_WORKSPACE}/out/LSP-lua-$1"
+    local OUT_DIR="${GITHUB_WORKSPACE}/out/LSP-lua_$1"
     local OUT_BIN_DIR="${OUT_DIR}/bin/$2"
     local BIN_DIR="${VSCODE_LUA_DIR}/bin/$2"
     mkdir -p "${OUT_BIN_DIR}"
@@ -29,6 +29,6 @@ function process
     ls -lash "${GITHUB_WORKSPACE}/LSP-lua-$1.zip"
 }
 
-process linux Linux
-process osx macOS
-process windows Windows
+process linux-x64 Linux
+process osx-x64 macOS
+process windows-x64 Windows
