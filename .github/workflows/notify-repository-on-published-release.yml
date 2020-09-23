@@ -6,11 +6,9 @@ on:
 
 jobs:
   notify:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Notify repository
-        run: |
-          curl -X POST https://api.github.com/repos/sublimelsp/repository/dispatches \
-          -H 'Accept: application/vnd.github.v3+json' \
-          -H 'Authorization: token ${{ secrets.RWOLS_PERSONAL_ACCESS_TOKEN }}' \
-          --data '{"event_type": "lsp-add-or-update-package", "client_payload": ${{ toJson(github.event) }} }'
+      - uses: sublimelsp/notify-repository-on-published-release-action@v1
+        with:
+          payload: ${{ github.event }}
+          personal-access-token: ${{ secrets.RWOLS_PERSONAL_ACCESS_TOKEN }}
