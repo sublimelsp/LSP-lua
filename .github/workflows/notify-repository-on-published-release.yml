@@ -10,5 +10,5 @@ jobs:
     steps:
       - uses: sublimelsp/notify-repository-on-published-release-action@v1
         with:
-          payload: ${{ github.event }}
+          payload: '${{ toJson(github.event) }}'
           personal-access-token: ${{ secrets.RWOLS_PERSONAL_ACCESS_TOKEN }}
