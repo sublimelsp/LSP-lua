@@ -38,7 +38,7 @@ out/%/release.zip: $(VSCODE_LUA) $(SOURCE) patch.diff
 	cd out/$* && zip -q -r release.zip .
 
 $(VSCODE_LUA):
-	git clone --depth=1 --recursive --branch=$(VSCODE_LUA_GIT_TAG) git@github.com:sumneko/vscode-lua.git $(VSCODE_LUA)
+	git clone --depth=1 --recursive --branch=$(VSCODE_LUA_GIT_TAG) https://github.com/sumneko/vscode-lua.git $(VSCODE_LUA)
 
 clean:
 	rm -rf out $(VSCODE_LUA)
