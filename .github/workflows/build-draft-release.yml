@@ -12,25 +12,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-
-      - name: Clone the vscode-lua repository
-        uses: actions/checkout@v2
-        with:
-          repository: sumneko/vscode-lua
-          path: vscode-lua
-          ref: ${{ github.event.inputs.vscode-lua-git-tag }}
-          submodules: recursive
 
       - name: Clone the LSP-lua repository
         uses: actions/checkout@v2
-        with:
-          repository: sublimelsp/LSP-lua
-          path: LSP-lua-source
 
       - name: Create the release files
-        run: bash LSP-lua-source/make.sh
+        run: make VSCODE_LUA_GIT_TAG=${{ github.event.inputs.vscode-lua-git-tag }}
 
       - name: Create release
         id: create-release
@@ -52,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua_linux-x64.zip
+          asset_path: ./out/linux-x64/release.zip
           asset_name: LSP-lua_linux-x64.zip
           asset_content_type: application/zip
 
@@ -62,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua_osx-x64.zip
+          asset_path: ./out/osx-x64/release.zip
           asset_name: LSP-lua_osx-x64.zip
           asset_content_type: application/zip
 
@@ -72,6 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./LSP-lua_windows-x64.zip
+          asset_path: ./out/windows-x64/release.zip
           asset_name: LSP-lua_windows-x64.zip
           asset_content_type: application/zip
