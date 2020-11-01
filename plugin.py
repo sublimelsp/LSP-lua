@@ -1,4 +1,6 @@
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import register_plugin
+from LSP.plugin import unregister_plugin
 from LSP.plugin.core.typing import Dict, Optional, Tuple
 import sublime
 
@@ -27,3 +29,11 @@ class Lua(AbstractPlugin):
             "binplatform": binplatform,
             "locale": locale
         }
+
+
+def plugin_loaded() -> None:
+    register_plugin(Lua)
+
+
+def plugin_unloaded() -> None:
+    unregister_plugin(Lua)
