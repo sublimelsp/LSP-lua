@@ -4,12 +4,84 @@ from LSP.plugin import unregister_plugin
 from LSP.plugin import DottedDict
 from LSP.plugin.core.typing import Any, Callable, List, Dict, Mapping, Optional, Tuple
 import sublime
+import os
+import urllib.request
+import zipfile
+import shutil
+import tempfile
+
+
+URL = "https://github.com/sumneko/vscode-lua/releases/download/v{0}/lua-{0}.vsix"
 
 
 class Lua(AbstractPlugin):
     @classmethod
     def name(cls) -> str:
         return "LSP-{}".format(cls.__name__.lower())
+
+    @classmethod
+    def basedir(cls) -> str:
+        return os.path.join(cls.storage_path(), cls.name())
+
+    @classmethod
+    def version_file(cls) -> str:
+        return os.path.join(cls.basedir(), "VERSION")
+
+    @classmethod
+    def zipfile(cls) -> str:
+        return os.path.join(cls.basedir(), "lua.vsix")
+
+    @classmethod
+    def binplatform(cls) -> str:
+        return {
+            "linux": "Linux",
+            "windows": "Windows",
+            "osx": "macOS"
+        }[sublime.platform()]
+
+    @classmethod
+    def bindir(cls) -> str:
+        return os.path.join(cls.basedir(), "bin", cls.binplatform())
+
+    @classmethod
+    def needs_update_or_installation(cls) -> bool:
+        settings, _ = cls.configuration()
+        server_version = str(settings.get("server_version"))
+        try:
+            with open(cls.version_file(), "r") as fp:
+                return server_version != fp.read().strip()
+        except OSError:
+            return True
+
+    @classmethod
+    def install_or_update(cls) -> None:
+        shutil.rmtree(cls.basedir(), ignore_errors=True)
+        try:
+            settings, _ = cls.configuration()
+            server_version = str(settings.get("server_version"))
+            binplatform = cls.binplatform()
+            with tempfile.TemporaryDirectory() as tmp:
+                # Download the VSIX file
+                zip_file = os.path.join(tmp, "lua.vsix")
+                urllib.request.urlretrieve(URL.format(server_version), zip_file)
+                # VSIX files are just zipfiles
+                with zipfile.ZipFile(zip_file, "r") as z:
+                    z.extractall(tmp)
+                for root, dirs, files in os.walk(os.path.join(tmp, "extension", "server", "bin")):
+                    for d in dirs:
+                        if d != binplatform:
+                            shutil.rmtree(os.path.join(root, d))
+                for root, dirs, files in os.walk(os.path.join(tmp, "extension", "server", "bin", binplatform)):
+                    for file in files:
+                        os.chmod(os.path.join(root, file), 0o744)
+                # Move the relevant subdirectory to the package storage
+                os.rename(os.path.join(tmp, "extension", "server"), cls.basedir())
+            # Write the version stamp
+            with open(cls.version_file(), "w") as fp:
+                fp.write(server_version)
+        except Exception:
+            shutil.rmtree(cls.basedir(), ignore_errors=True)
+            raise
 
     @classmethod
     def configuration(cls) -> Tuple[sublime.Settings, str]:
@@ -20,15 +92,13 @@ class Lua(AbstractPlugin):
     @classmethod
     def additional_variables(cls) -> Optional[Dict[str, str]]:
         settings, _ = cls.configuration()
-        locale = str(settings.get("locale"))
-        binplatform = {
-            "linux": "Linux",
-            "windows": "Windows",
-            "osx": "macOS"
-        }[sublime.platform()]
         return {
-            "binplatform": binplatform,
-            "locale": locale
+            "binplatform": {
+                "linux": "Linux",
+                "windows": "Windows",
+                "osx": "macOS"
+            }[sublime.platform()],
+            "locale": str(settings.get("locale"))
         }
 
     def on_pre_server_command(self, command: Mapping[str, Any], done_callback: Callable[[], None]) -> bool:

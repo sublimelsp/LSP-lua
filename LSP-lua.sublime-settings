@@ -1,48 +1,68 @@
 {
     // possible values: en-US, zh-CN
     "locale": "en-US",
+
+    // The startup command for this language server
     "command": [
-        "${packages}/LSP-lua/bin/${binplatform}/lua-language-server",
+        "${storage_path}/LSP-lua/bin/${binplatform}/lua-language-server",
         "-E",
         "-e",
         "LANG=\"${locale}\"",
-        "${packages}/LSP-lua/main.lua"
+        "${storage_path}/LSP-lua/main.lua"
     ],
-    "languages": [
-        {
-            "languageId": "lua"
-        }
-    ],
+
+    // The server version to download in $DATA/Package Storage
+    "server_version": "1.8.1",
+
+    // We start this server when opening a lua file
+    "selector": "source.lua",
+
+    // The server-specific settings
     "settings": {
+        // possible values: Grammar, Semantic
+        "Lua.color.mode": "Grammar",
         // possible values: Disable, Both, Replace
         "Lua.completion.callSnippet": "Disable",
         "Lua.completion.displayContext": 6,
         "Lua.completion.enable": true,
         // possible values: Disable, Both, Replace
         "Lua.completion.keywordSnippet": "Replace",
-        "Lua.diagnostics.disable": [],
+        "Lua.develop.debuggerPort": 11412,
+        "Lua.develop.debuggerWait": false,
+        "Lua.develop.enable": false,
+        // "Lua.diagnostics.disable": [],
         "Lua.diagnostics.enable": true,
-        "Lua.diagnostics.globals": [],
-        "Lua.diagnostics.severity": {},
+        // "Lua.diagnostics.globals": [],
+        // "Lua.diagnostics.neededFileStatus": {},
+        // "Lua.diagnostics.severity": {},
+        "Lua.diagnostics.workspaceDelay": 0,
+        "Lua.diagnostics.workspaceRate": 100,
         "Lua.hover.enable": true,
+        "Lua.hover.fieldInfer": 3000,
+        "Lua.hover.previewFields": 100,
         "Lua.hover.viewNumber": true,
         "Lua.hover.viewString": true,
         "Lua.hover.viewStringMax": 1000,
+        "Lua.intelliSense.searchDepth": 0,
+        // "Lua.runtime.nonstandardSymbol": [],
         "Lua.runtime.path": [
             "?.lua",
             "?/init.lua",
             "?/?.lua"
         ],
+        // "Lua.runtime.special": {},
+        "Lua.runtime.unicodeName": false,
         // possible values: Lua 5.1, Lua 5.2, Lua 5.3, Lua 5.4, LuaJIT
-        "Lua.runtime.version": "Lua 5.3",
+        "Lua.runtime.version": "Lua 5.4",
         "Lua.signatureHelp.enable": true,
+        "Lua.telemetry.enable": false,
         "Lua.workspace.ignoreDir": [
             ".vscode"
         ],
         "Lua.workspace.ignoreSubmodules": true,
-        "Lua.workspace.library": {},
-        "Lua.workspace.maxPreload": 300,
+        // "Lua.workspace.library": {},
+        "Lua.workspace.maxPreload": 1000,
         "Lua.workspace.preloadFileSize": 100,
-        "Lua.workspace.useGitIgnore": true
+        "Lua.workspace.useGitIgnore": true,
     }
 }
