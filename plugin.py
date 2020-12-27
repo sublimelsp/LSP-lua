@@ -1,7 +1,8 @@
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.typing import Dict, Optional, Tuple
+from LSP.plugin import DottedDict
+from LSP.plugin.core.typing import Any, Callable, List, Dict, Mapping, Optional, Tuple
 import sublime
 
 
@@ -29,6 +30,25 @@ class Lua(AbstractPlugin):
             "binplatform": binplatform,
             "locale": locale
         }
+
+    def on_pre_server_command(self, command: Mapping[str, Any], done_callback: Callable[[], None]) -> bool:
+        cmd = command["command"]
+        if cmd == "lua.config":
+            return self._handle_lua_config_command(command["arguments"], done_callback)
+        return super().on_pre_server_command(command, done_callback)
+
+    def _handle_lua_config_command(self, args: List[Dict[str, Any]], done_callback: Callable[[], None]) -> bool:
+        session = self.weaksession()
+        if not session:
+            return False
+        window = session.window
+        data = window.project_data()
+        if not isinstance(data, dict):
+            return False
+        dd = DottedDict(data)
+        dd.set("settings.LSP.LSP-lua.settings.{}".format(args[0]), args[1])
+        done_callback()
+        return True
 
 
 def plugin_loaded() -> None:
