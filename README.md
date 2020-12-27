@@ -1,11 +1,14 @@
 # LSP-lua
 
-This plugin bundles the language server binaries in the package. This is because there is no distribution platform for
-this language server.
+A language client for Lua. This package will download and unpack the lua-language-server in `$DATA/Package Storage/LSP-lua`.
 
 # Applicable Selectors
 
-This language operates on files with the `source.lua` base scope.
+This language server operates on files with the `source.lua` base scope.
+
+# Configuration
+
+Run `Preferences: LSP-lua Settings` from the Command Palette.
 
 # Locale
 
