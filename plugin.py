@@ -108,17 +108,32 @@ class Lua(AbstractPlugin):
         return super().on_pre_server_command(command, done_callback)
 
     def _handle_lua_config_command(self, args: List[Dict[str, Any]], done_callback: Callable[[], None]) -> bool:
-        session = self.weaksession()
-        if not session:
-            return False
-        window = session.window
-        data = window.project_data()
-        if not isinstance(data, dict):
-            return False
-        dd = DottedDict(data)
-        dd.set("settings.LSP.LSP-lua.settings.{}".format(args[0]), args[1])
-        done_callback()
-        return True
+        action = args[0]["action"]
+        if action == "add":
+            key = args[0]["key"]
+            value = args[0]["value"]
+            session = self.weaksession()
+            if not session:
+                return False
+            window = session.window
+            data = window.project_data()
+            if not isinstance(data, dict):
+                return False
+            dd = DottedDict(data)
+            key = "settings.LSP.LSP-lua.settings.{}".format(key)
+            thelist = dd.get(key)
+            if isinstance(thelist, list):
+                if value not in thelist:
+                    thelist.append(value)
+            else:
+                thelist = [value]
+            dd.set(key, thelist)
+            data = dd.get()
+            print("data is now:", data)
+            window.set_project_data(data)
+            done_callback()
+            return True
+        return False
 
 
 def plugin_loaded() -> None:
