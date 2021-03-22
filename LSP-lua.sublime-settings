@@ -12,7 +12,7 @@
     ],
 
     // The server version to download in $DATA/Package Storage
-    "server_version": "1.8.1",
+    "server_version": "1.19.0",
 
     // We start this server when opening a lua file
     "selector": "source.lua",
