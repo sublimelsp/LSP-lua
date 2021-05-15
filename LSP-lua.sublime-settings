@@ -14,6 +14,15 @@
     // The server version to download in $DATA/Package Storage
     "server_version": "1.21.1",
 
+    // Disable the trigger characters, because there's too many of them. The
+    // default Lua syntax is capable enough to best decide when to trigger
+    // the auto-complete widget.
+    "disabled_capabilities": {
+        "completionProvider": {
+            "triggerCharacters": true
+        }
+    },
+
     // We start this server when opening a lua file
     "selector": "source.lua",
 
