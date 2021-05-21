@@ -2,6 +2,10 @@
 
 A language client for Lua. This package will download and unpack the lua-language-server in `$DATA/Package Storage/LSP-lua`.
 
+To use this package, you must have:
+
+- The [LSP](https://packagecontrol.io/packages/LSP) package.
+
 # Applicable Selectors
 
 This language server operates on files with the `source.lua` base scope.
