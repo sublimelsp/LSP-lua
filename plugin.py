@@ -131,7 +131,6 @@ class Lua(AbstractPlugin):
                 thelist = [value]
             dd.set(key, thelist)
             data = dd.get()
-            print("data is now:", data)
             window.set_project_data(data)
             done_callback()
             return True
