@@ -18,3 +18,7 @@ Run `Preferences: LSP-lua Settings` from the Command Palette.
 
 You can make this language server report documentation in English or Chinese. The default is English. To change it
 into Chinese, run the command `Preferences: LSP-lua Settings` and change the `"locale"` key.
+
+# Disabling Diagnostics via Code Actions
+
+This language server allows you to disable diagnostics by means of a Code Action. You can run the "Code Action" and the client (this package) is supposed to modify the settings to add or remove the unwanted diagnostic. This package implements that by editing your .sublime-project file. So in order for this to work, you need to have your window be backed by a .sublime-project file. [Learn more about projects here](https://www.sublimetext.com/docs/projects.html).
