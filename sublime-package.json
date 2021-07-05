@@ -3,16 +3,16 @@
     "settings": [
       {
         "file_patterns": [
-          "/LSP-Lua.sublime-settings"
+          "/LSP-lua.sublime-settings"
         ],
         "schema": {
-          "$id": "sublime://settings/LSP-Lua",
+          "$id": "sublime://settings/LSP-lua",
           "allOf": [
             {
               "$ref": "sublime://settings/LSP-plugin-base"
             },
             {
-              "$ref": "sublime://settings/LSP-Lua#/definitions/PluginConfig"
+              "$ref": "sublime://settings/LSP-lua#/definitions/PluginConfig"
             }
           ],
           "definitions": {
@@ -1215,8 +1215,8 @@
               "properties": {
                 "LSP": {
                   "properties": {
-                    "LSP-Lua": {
-                      "$ref": "sublime://settings/LSP-Lua#/definitions/PluginConfig"
+                    "LSP-lua": {
+                      "$ref": "sublime://settings/LSP-lua#/definitions/PluginConfig"
                     }
                   }
                 }
