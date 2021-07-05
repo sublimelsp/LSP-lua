@@ -77,7 +77,7 @@ class Lua(AbstractPlugin):
                 # Make sure package storage path exists for new users
                 os.makedirs(cls.storage_path(), exist_ok=True)
                 # Move the relevant subdirectory to the package storage
-                os.rename(os.path.join(tmp, "extension", "server"), cls.basedir())
+                shutil.move(os.path.join(tmp, "extension", "server"), cls.basedir())
             # Write the version stamp
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
