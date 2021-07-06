@@ -1156,11 +1156,6 @@
                       "markdownDescription": "Show progress bar in status bar.",
                       "type": "boolean"
                     },
-                    "Lua.window.statusBar": {
-                      "default": true,
-                      "markdownDescription": "Show extension status in status bar.",
-                      "type": "boolean"
-                    },
                     "Lua.workspace.ignoreDir": {
                       "default": [
                         ".vscode"

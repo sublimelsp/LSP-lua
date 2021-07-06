@@ -132,9 +132,7 @@
         // Policy).
         "Lua.telemetry.enable": false,
         // Show progress bar in status bar.
-        "Lua.window.progressBar": false,
-        // Show extension status in status bar.
-        "Lua.window.statusBar": false,
+        "Lua.window.progressBar": true,
         // Ignored files and directories (Use `.gitignore` grammar).
         "Lua.workspace.ignoreDir": [
             ".vscode"
