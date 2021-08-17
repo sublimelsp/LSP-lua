@@ -1192,6 +1192,13 @@
                       "default": true,
                       "markdownDescription": "Ignore files list in `.gitignore` .",
                       "type": "boolean"
+                    },
+                    "Lua.workspace.userThirdParty": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "Add private third-party library configuration file paths here, please refer to the built-in [configuration file path](https://github.com/sumneko/lua-language-server/tree/master/meta/3rd)",
+                      "type": "array"
                     }
                   }
                 }
