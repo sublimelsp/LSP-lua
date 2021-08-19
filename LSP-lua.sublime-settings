@@ -149,5 +149,8 @@
         "Lua.workspace.preloadFileSize": 100,
         // Ignore files list in `.gitignore` .
         "Lua.workspace.useGitIgnore": true,
+        // Add private third-party library configuration file paths here, please refer to the built-
+        // in [configuration file path](https://github.com/sumneko/lua-language-server/tree/master/meta/3rd)
+        "Lua.workspace.userThirdParty": [],
     }
 }
