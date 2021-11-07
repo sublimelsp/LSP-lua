@@ -11,6 +11,13 @@
         "${storage_path}/LSP-lua/main.lua"
     ],
 
+    // Initialization options sent to the subprocess during startup. You should
+    // normally not touch this.
+    "initializationOptions": {
+        // We understand how to handle configuration changes from the server.
+        "changeConfiguration": true
+    },
+
     // The server version to download in $CACHE/Package Storage
     "server_version": "2.3.6",
 
