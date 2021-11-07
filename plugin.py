@@ -2,6 +2,7 @@ from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin import DottedDict
+from LSP.plugin.core.sessions import Session
 from LSP.plugin.core.typing import Any, Callable, List, Dict, Mapping, Optional, Tuple
 import sublime
 import os
@@ -9,6 +10,8 @@ import urllib.request
 import zipfile
 import shutil
 import tempfile
+import weakref
+import functools
 
 
 URL = "https://github.com/sumneko/vscode-lua/releases/download/v{0}/lua-{0}.vsix"
@@ -100,41 +103,73 @@ class Lua(AbstractPlugin):
                 "windows": "Windows",
                 "osx": "macOS"
             }[sublime.platform()],
-            "locale": str(settings.get("locale"))
+            "locale": str(settings.get("locale")),
+            "3rd": os.path.join(cls.basedir(), "meta", "3rd")
         }
 
-    def on_pre_server_command(self, command: Mapping[str, Any], done_callback: Callable[[], None]) -> bool:
-        cmd = command["command"]
-        if cmd == "lua.config":
-            return self._handle_lua_config_command(command["arguments"], done_callback)
-        return super().on_pre_server_command(command, done_callback)
+    def __init__(self, weaksession: 'weakref.ref[Session]') -> None:
+        super().__init__(weaksession)
+        self._settings_change_count = 0
+        self._queued_changes = []  # type: List[Dict[str, Any]]
 
-    def _handle_lua_config_command(self, args: List[Dict[str, Any]], done_callback: Callable[[], None]) -> bool:
-        action = args[0]["action"]
-        if action == "add":
-            key = args[0]["key"]
-            value = args[0]["value"]
-            session = self.weaksession()
-            if not session:
-                return False
-            window = session.window
-            data = window.project_data()
-            if not isinstance(data, dict):
-                return False
-            dd = DottedDict(data)
-            key = "settings.LSP.LSP-lua.settings.{}".format(key)
-            thelist = dd.get(key)
-            if isinstance(thelist, list):
-                if value not in thelist:
-                    thelist.append(value)
+    def m___command(self, params: Any) -> None:
+        """Handles the $/command notification."""
+        if not isinstance(params, dict):
+            return print("{}: cannot handle command: expected dict, got {}".format(self.name(), type(params)))
+        command = params["command"]
+        if command == "lua.config":
+            self._queued_changes.extend(params["data"])
+            self._settings_change_count += 1
+            current_count = self._settings_change_count
+            sublime.set_timeout_async(functools.partial(self._handle_config_commands_async, current_count), 200)
+        else:
+            sublime.error_message("LSP-lua: unrecognized command: {}".format(command))
+
+    def _handle_config_commands_async(self, settings_change_count: int) -> None:
+        if self._settings_change_count != settings_change_count:
+            return
+        commands, self._queued_changes = self._queued_changes, []
+        session = self.weaksession()
+        if not session:
+            return
+        base, settings = self._get_server_settings(session.window)
+        if base is None or settings is None:
+            return
+        for command in commands:
+            action = command["action"]
+            key = command["key"]
+            value = command["value"]
+            if action == "set":
+                settings[key] = value
+            elif action == "add":
+                values = settings.get(key)
+                if not isinstance(values, list):
+                    values = []
+                values.append(value)
+                settings[key] = values
             else:
-                thelist = [value]
-            dd.set(key, thelist)
-            data = dd.get()
-            window.set_project_data(data)
-            done_callback()
-            return True
-        return False
+                print("LSP-lua: unrecognized action:", action)
+        session.window.set_project_data(base)
+        if not session.window.project_file_name():
+            sublime.message_dialog(" ".join((
+                "The server settings have been applied in the Window,",
+                "but this Window is not backed by a .sublime-project.",
+                "Click on Project > Save Project As... to store the settings."
+            )))
+
+    def _get_server_settings(self, window: sublime.Window) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
+        data = window.project_data()
+        if not isinstance(data, dict):
+            return None, None
+        if "settings" not in data:
+            data["settings"] = {}
+        if "LSP" not in data["settings"]:
+            data["settings"]["LSP"] = {}
+        if "LSP-lua" not in data["settings"]["LSP"]:
+            data["settings"]["LSP"]["LSP-lua"] = {}
+        if "settings" not in data["settings"]["LSP"]["LSP-lua"]:
+            data["settings"]["LSP"]["LSP-lua"]["settings"] = {}
+        return data, data["settings"]["LSP"]["LSP-lua"]["settings"]
 
 
 def plugin_loaded() -> None:
