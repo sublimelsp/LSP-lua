@@ -1,20 +1,18 @@
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin import DottedDict
 from LSP.plugin.core.sessions import Session
-from LSP.plugin.core.typing import Any, Callable, List, Dict, Mapping, Optional, Tuple
-import sublime
-import os
-import urllib.request
-import zipfile
-import shutil
-import tempfile
-import weakref
+from LSP.plugin.core.typing import Any, List, Dict, Optional, Tuple
 import functools
+import os
+import shutil
+import sublime
+import tempfile
+import urllib.request
+import weakref
+import zipfile
 
-
-URL = "https://github.com/sumneko/vscode-lua/releases/download/v{0}/lua-{0}.vsix"
+URL = "https://github.com/sumneko/vscode-lua/releases/download/v{v}/vscode-lua-v{v}-{platform_arch}.vsix"
 
 
 class Lua(AbstractPlugin):
@@ -35,16 +33,17 @@ class Lua(AbstractPlugin):
         return os.path.join(cls.basedir(), "lua.vsix")
 
     @classmethod
-    def binplatform(cls) -> str:
+    def platform_arch(cls) -> str:
         return {
-            "linux": "Linux",
-            "windows": "Windows",
-            "osx": "macOS"
-        }[sublime.platform()]
+            "linux_x64": "linux-x64",
+            "osx_arm64": "darwin-arm64",
+            "osx_x64": "darwin-x64",
+            "windows_x64": "win32-x64",
+        }[sublime.executable_hash()[1]]
 
     @classmethod
     def bindir(cls) -> str:
-        return os.path.join(cls.basedir(), "bin", cls.binplatform())
+        return os.path.join(cls.basedir(), "bin")
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -62,19 +61,14 @@ class Lua(AbstractPlugin):
         try:
             settings, _ = cls.configuration()
             server_version = str(settings.get("server_version"))
-            binplatform = cls.binplatform()
             with tempfile.TemporaryDirectory() as tmp:
                 # Download the VSIX file
                 zip_file = os.path.join(tmp, "lua.vsix")
-                urllib.request.urlretrieve(URL.format(server_version), zip_file)
+                urllib.request.urlretrieve(URL.format(v=server_version, platform_arch=cls.platform_arch()), zip_file)
                 # VSIX files are just zipfiles
                 with zipfile.ZipFile(zip_file, "r") as z:
                     z.extractall(tmp)
                 for root, dirs, files in os.walk(os.path.join(tmp, "extension", "server", "bin")):
-                    for d in dirs:
-                        if d != binplatform:
-                            shutil.rmtree(os.path.join(root, d))
-                for root, dirs, files in os.walk(os.path.join(tmp, "extension", "server", "bin", binplatform)):
                     for file in files:
                         os.chmod(os.path.join(root, file), 0o744)
                 # Make sure package storage path exists for new users
@@ -98,11 +92,7 @@ class Lua(AbstractPlugin):
     def additional_variables(cls) -> Optional[Dict[str, str]]:
         settings, _ = cls.configuration()
         return {
-            "binplatform": {
-                "linux": "Linux",
-                "windows": "Windows",
-                "osx": "macOS"
-            }[sublime.platform()],
+            "platform_arch": cls.platform_arch(),
             "locale": str(settings.get("locale")),
             "3rd": os.path.join(cls.basedir(), "meta", "3rd")
         }
