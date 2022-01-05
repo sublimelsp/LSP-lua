@@ -22,15 +22,17 @@
                   "additionalProperties": false,
                   "properties": {
                     "Lua.color.mode": {
-                      "default": "Semantic",
+                      "default": "Grammar",
                       "enum": [
                         "Grammar",
-                        "Semantic"
+                        "Semantic",
+                        "SemanticEnhanced"
                       ],
                       "markdownDescription": "Color mode.",
                       "markdownEnumDescriptions": [
                         "Grammar color.",
-                        "Semantic color. You may need to set `editor.semanticHighlighting.enabled` to `true` to take effect."
+                        "Semantic color.",
+                        "Enhanced semantic color. Like `Semantic`, but with additional analysis which might be more computationally expensive."
                       ],
                       "type": "string"
                     },

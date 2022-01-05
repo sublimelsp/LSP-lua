@@ -36,7 +36,7 @@
     // The server-specific settings
     "settings": {
         // Color mode.
-        // possible values: Grammar, Semantic
+        // possible values: Grammar, Semantic, SemanticEnhanced
         "Lua.color.mode": "Grammar",
         // When the input looks like a file name, automatically `require` this file.
         "Lua.completion.autoRequire": true,
