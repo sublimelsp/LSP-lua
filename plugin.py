@@ -34,8 +34,8 @@ class Lua(AbstractPlugin):
             "linux_x64": "linux-x64",
             "osx_arm64": "darwin-arm64",
             "osx_x64": "darwin-x64",
+            "windows_x32": "win32-ia32",
             "windows_x64": "win32-x64",
-            "windows_x86": "win32-ia32",
         }[sublime.platform() + "_" + sublime.arch()]
 
     @classmethod
