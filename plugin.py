@@ -40,7 +40,7 @@ class Lua(AbstractPlugin):
             "osx_x64": "darwin-x64",
             "windows_x64": "win32-x64",
             "windows_x86": "win32-ia32",
-        }[sublime.executable_hash()[1]]
+        }[sublime.platform() + "_" + sublime.arch()]
 
     @classmethod
     def bindir(cls) -> str:
