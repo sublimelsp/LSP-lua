@@ -29,10 +29,6 @@ class Lua(AbstractPlugin):
         return os.path.join(cls.basedir(), "VERSION")
 
     @classmethod
-    def zipfile(cls) -> str:
-        return os.path.join(cls.basedir(), "lua.vsix")
-
-    @classmethod
     def platform_arch(cls) -> str:
         return {
             "linux_x64": "linux-x64",
@@ -41,10 +37,6 @@ class Lua(AbstractPlugin):
             "windows_x64": "win32-x64",
             "windows_x86": "win32-ia32",
         }[sublime.platform() + "_" + sublime.arch()]
-
-    @classmethod
-    def bindir(cls) -> str:
-        return os.path.join(cls.basedir(), "bin")
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
