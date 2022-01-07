@@ -1,0 +1,15 @@
+%YAML 1.2
+---
+name: Lua (for LSP)
+scope: source.lua.lsp
+hidden: true
+version: 2
+
+extends: Packages/Lua/Lua.sublime-syntax
+
+contexts:
+  main:
+    - meta_include_prototype: false
+    # TODO: customize for lua-language-server code blocks
+    - include: comments
+    - include: statements
