@@ -19,14 +19,6 @@ Run `Preferences: LSP-lua Settings` from the Command Palette.
 You can make this language server report documentation in English or Chinese. The default is English. To change it
 into Chinese, run the command `Preferences: LSP-lua Settings` and change the `"locale"` key.
 
-# Popup highlighting
-
-The code blocks that this language server returns are not valid Lua code. Consequently the built-in syntax highlighter marks most code blocks as invalid. Set
-
-```js
-    "mdpopups.use_sublime_highlighter": false,
-````
-
 in Packages/User/Preferences.sublime-settings to use pygments instead, which is a highlighter that is more forgiving.
 
 # Disabling Diagnostics via Code Actions
