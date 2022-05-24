@@ -3,11 +3,11 @@
     "locale": "en-US",
 
     // The startup command for this language server
+    // https://github.com/sumneko/lua-language-server/wiki/Command-line
     "command": [
         "${storage_path}/LSP-lua/bin/lua-language-server",
         "-E",
-        "-e",
-        "LANG=\"${locale}\"",
+        "--locale=\"${locale}\"",
         "${storage_path}/LSP-lua/main.lua"
     ],
 
@@ -19,7 +19,7 @@
     },
 
     // The server version to download in $CACHE/Package Storage
-    "server_version": "2.5.6",
+    "server_version": "3.2.3",
 
     // Disable the trigger characters, because there's too many of them. The
     // default Lua syntax is capable enough to best decide when to trigger
@@ -111,8 +111,8 @@
         "Lua.runtime.nonstandardSymbol": [],
         // `package.path`
         "Lua.runtime.path": [
-            "?.lua", 
-            "?/init.lua", 
+            "?.lua",
+            "?/init.lua",
             "?/?.lua"
         ],
         // Plugin path. Please read [wiki](https://github.com/sumneko/lua-language-
@@ -159,5 +159,55 @@
         // Add private third-party library configuration file paths here, please refer to the built-
         // in [configuration file path](https://github.com/sumneko/lua-language-server/tree/master/meta/3rd)
         "Lua.workspace.userThirdParty": [],
+        "Lua.format.enable": true,
+        "Lua.format.defaultConfig": {
+            // [wiki]en:https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/docs/format_config_EN.md
+            // [wiki]zh:https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/docs/format_config.md
+            "indent_style": "space", //optional space/tab
+            "indent_size": "4", //if indent_style is space, this is valid
+            "tab_width": "4", //if indent_style is tab, this is valid
+            "quote_style": "none", //none/single/double
+            "call_arg_parentheses": "keep", //keep/remove/remove_table_only/remove_string_only/unambiguous_remove_string_only
+            "continuation_indent_size": "4", //only support number
+            // if true, continuation_indent_size for local or assign statement is invalid
+            // however, if the expression list has cross row expression, it will not be aligned to the first expression
+            "local_assign_continuation_align_to_first_expression": "false",
+            // function call expression's args will align to first arg
+            // however, if the args has cross row arg, it will not be aligned to the first arg
+            "align_call_args": "false",
+            "align_function_define_params": "true", //if true, all function define params will align to first param
+            "align_chained_expression_statement": "false",
+            "keep_one_space_between_table_and_bracket": "true", //if true, format like this "local t = { 1, 2, 3 }"
+            "align_table_field_to_first_field": "false", //if indent_style is tab, this option is invalid
+            "keep_one_space_between_namedef_and_attribute": "true", //if true, ormat like this "local t <const> = 1"
+            "max_continuous_line_distance": "1", //continous line distance
+            "continuous_assign_statement_align_to_equal_sign": "true", //see document for detail
+            "continuous_assign_table_field_align_to_equal_sign": "true", //see document for detail
+            "label_no_indent": "false", //if true, the label loses its current indentation
+            "do_statement_no_indent": "false", //if true, there will be no indentation in the do statement
+            "if_condition_no_continuation_indent": "false", //if true, the conditional expression of the if statement will not be a continuation line indent
+            "if_branch_comments_after_block_no_indent": "false",
+            "table_append_expression_no_space": "false", //if true, t[#t+1] will not space wrapper '+'
+            "if_condition_align_with_each_other": "false", //if statement will align like switch case
+            "long_chain_expression_allow_one_space_after_colon": "false",
+            "remove_empty_header_and_footer_lines_in_function": "true",
+            "remove_expression_list_finish_comma": "true",
+            "end_of_line": "auto", //optional crlf/lf/cr/auto, if it is 'auto', in windows it is crlf other platforms are lf
+            "detect_end_of_line": "false",
+            // [line layout]
+            // The following configuration supports four expressions
+            // minLine:${n}
+            // keepLine
+            // keepLine:${n}
+            // maxLine:${n}
+            "keep_line_after_if_statement": "minLine:0",
+            "keep_line_after_do_statement": "minLine:0",
+            "keep_line_after_while_statement": "minLine:0",
+            "keep_line_after_repeat_statement": "minLine:0",
+            "keep_line_after_for_statement": "minLine:0",
+            "keep_line_after_local_or_assign_statement": "keepLine",
+            "keep_line_after_function_define_statement": "keepLine:1",
+            "keep_line_after_expression_statement": "keepLine",
+        }
     }
 }
