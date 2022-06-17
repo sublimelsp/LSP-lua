@@ -1,13 +1,13 @@
 {
-    // possible values: en-US, zh-CN
-    "locale": "en-US",
+    // possible values: en-us, zh-cn, zh-tw, pt-br
+    "locale": "en-us",
 
     // The startup command for this language server
+    // https://github.com/sumneko/lua-language-server/wiki/Command-line
     "command": [
         "${storage_path}/LSP-lua/bin/lua-language-server",
         "-E",
-        "-e",
-        "LANG=\"${locale}\"",
+        "--locale=\"${locale}\"",
         "${storage_path}/LSP-lua/main.lua"
     ],
 
@@ -19,7 +19,7 @@
     },
 
     // The server version to download in $CACHE/Package Storage
-    "server_version": "2.5.6",
+    "server_version": "3.3.0",
 
     // Disable the trigger characters, because there's too many of them. The
     // default Lua syntax is capable enough to best decide when to trigger
@@ -159,5 +159,61 @@
         // Add private third-party library configuration file paths here, please refer to the built-
         // in [configuration file path](https://github.com/sumneko/lua-language-server/tree/master/meta/3rd)
         "Lua.workspace.userThirdParty": [],
+        "Lua.format.enable": true,
+        "Lua.format.defaultConfig": {
+            // [wiki]en:https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/README_EN.md
+            // [wiki]zh:https://github.com/CppCXY/EmmyLuaCodeStyle
+            // [basic code reformat option]
+            "indent_style": "space",
+            "indent_size": "4",
+            "tab_width": "4",
+            "quote_style": "none",
+            "call_arg_parentheses": "keep",
+            "continuation_indent_size": "4",
+            "local_assign_continuation_align_to_first_expression": "false",
+            "align_call_args": "false",
+            "align_function_define_params": "true",
+            "align_chained_expression_statement": "false",
+            "keep_one_space_between_table_and_bracket": "true",
+            "align_table_field_to_first_field": "false",
+            "keep_one_space_between_namedef_and_attribute": "true",
+            "max_continuous_line_distance": "1",
+            "continuous_assign_statement_align_to_equal_sign": "true",
+            "continuous_assign_table_field_align_to_equal_sign": "true",
+            "label_no_indent": "false",
+            "do_statement_no_indent": "false",
+            "if_condition_no_continuation_indent": "false",
+            "if_branch_comments_after_block_no_indent": "false",
+            "table_append_expression_no_space": "false",
+            "if_condition_align_with_each_other": "false",
+            "long_chain_expression_allow_one_space_after_colon": "false",
+            "remove_empty_header_and_footer_lines_in_function": "true",
+            "remove_expression_list_finish_comma": "true",
+            "end_of_line": "auto",
+            "detect_end_of_line": "false",
+            "keep_line_after_if_statement": "minLine:0",
+            "keep_line_after_do_statement": "minLine:0",
+            "keep_line_after_while_statement": "minLine:0",
+            "keep_line_after_repeat_statement": "minLine:0",
+            "keep_line_after_for_statement": "minLine:0",
+            "keep_line_after_local_or_assign_statement": "keepLine",
+            "keep_line_after_function_define_statement": "keepLine:1",
+            "keep_line_after_expression_statement": "keepLine",
+            // [diagnostic]
+            "enable_check_codestyle": "true",
+            "max_line_length": "120",
+            "insert_final_newline": "true",
+            // [name style check]
+            "enable_name_style_check": "false",
+            "local_name_define_style": "snake_case",
+            "function_param_name_style": "snake_case",
+            "function_name_define_style": "snake_case",
+            "local_function_name_define_style": "snake_case",
+            "table_field_name_define_style": "snake_case",
+            "global_variable_name_define_style": "snake_case|upper_snake_case",
+            "module_name_define_style": "same('m')|same(filename, snake_case)",
+            "require_module_name_style": "same(first_param, snake_case)",
+            "class_name_define_style": "same(filename, snake_case)"
+        }
     }
 }
