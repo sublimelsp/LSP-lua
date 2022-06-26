@@ -18,6 +18,20 @@
           "definitions": {
             "PluginConfig": {
               "properties": {
+                "locale": {
+                  "enum": [
+                    "en-US",
+                    "zh-CN",
+                    "zh-TW",
+                    "pt-BR"
+                  ],
+                  "markdownEnumDescriptions": [
+                    "Use English",
+                    "Use Chinese",
+                    "Use Chinese language as used in Taiwan",
+                    "Use Brazilian Portuguese"
+                  ]
+                },
                 "settings": {
                   "additionalProperties": false,
                   "properties": {

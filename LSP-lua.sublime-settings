@@ -6,7 +6,8 @@
     "command": [
         "${storage_path}/LSP-lua/bin/lua-language-server",
         "-E",
-        "${storage_path}/LSP-lua/main.lua"
+        "${storage_path}/LSP-lua/main.lua",
+        "--locale=${locale}"
     ],
 
     // Initialization options sent to the subprocess during startup. You should
