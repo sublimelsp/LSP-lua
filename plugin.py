@@ -3,6 +3,7 @@ from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.sessions import Session
 from LSP.plugin.core.typing import Any, List, Dict, Optional, Tuple
+from distutils.dir_util import copy_tree
 from os import listdir, walk
 import functools
 import os
@@ -66,7 +67,7 @@ class Lua(AbstractPlugin):
                     with tarfile.open(downloaded_file) as z:
                         z.extractall(tmp)
                 os.makedirs(cls.storage_path(), exist_ok=True)
-                shutil.copytree(os.path.join(tmp), cls.basedir())
+                copy_tree(os.path.join(tmp), cls.basedir())
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
             shutil.rmtree(os.path.join(tmp), ignore_errors=True)
