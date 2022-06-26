@@ -51,43 +51,25 @@ class Lua(AbstractPlugin):
 
     @classmethod
     def install_or_update(cls) -> None:
-        # shutil.rmtree(cls.basedir(), ignore_errors=True)
+        shutil.rmtree(cls.basedir(), ignore_errors=True)
         try:
             settings, _ = cls.configuration()
             server_version = str(settings.get("server_version"))
-            
-            print("storage path: ", cls.storage_path())
-            print("LSP-lua path: ", cls.basedir())
-
             with tempfile.TemporaryDirectory() as tmp:
                 downloaded_file = os.path.join(tmp, "lua-lang-download")
                 platform = cls.platform_arch()
-
-                print("downloading: ", URL.format(v=server_version, platform_arch=cls.platform_arch()))
                 urllib.request.urlretrieve(URL.format(v=server_version, platform_arch=cls.platform_arch()), downloaded_file)
-                
                 if platform == "win32-ia32.zip" or platform == "win32-x64.zip":
-                    print("interesting, a windows file...")
                     with zipfile.ZipFile(downloaded_file, "r") as z:
                         z.extractall(tmp)
                 else:
-                    print("extracting tarball")
                     with tarfile.open(downloaded_file) as z:
                         z.extractall(tmp)
-
-                print("making sure package storage path exists")
                 os.makedirs(cls.storage_path(), exist_ok=True)
-
-                print("Copy the relevant subdirectory to the package storage")
                 shutil.copytree(os.path.join(tmp), cls.basedir())
-
-            print("write the version stamp")
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
-
-            print("cleaning up")
             shutil.rmtree(os.path.join(tmp), ignore_errors=True)
-            
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise
