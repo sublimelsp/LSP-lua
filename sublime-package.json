@@ -18,24 +18,23 @@
           "definitions": {
             "PluginConfig": {
               "properties": {
+                "locale": {
+                  "enum": [
+                    "en-US",
+                    "zh-CN",
+                    "zh-TW",
+                    "pt-BR"
+                  ],
+                  "markdownEnumDescriptions": [
+                    "Use English",
+                    "Use Chinese",
+                    "Use Chinese language as used in Taiwan",
+                    "Use Brazilian Portuguese"
+                  ]
+                },
                 "settings": {
                   "additionalProperties": false,
                   "properties": {
-                    "Lua.color.mode": {
-                      "default": "Grammar",
-                      "enum": [
-                        "Grammar",
-                        "Semantic",
-                        "SemanticEnhanced"
-                      ],
-                      "markdownDescription": "Color mode.",
-                      "markdownEnumDescriptions": [
-                        "Grammar color.",
-                        "Semantic color.",
-                        "Enhanced semantic color. Like `Semantic`, but with additional analysis which might be more computationally expensive."
-                      ],
-                      "type": "string"
-                    },
                     "Lua.completion.autoRequire": {
                       "default": true,
                       "markdownDescription": "When the input looks like a file name, automatically `require` this file.",
@@ -57,7 +56,7 @@
                       "type": "string"
                     },
                     "Lua.completion.displayContext": {
-                      "default": 6,
+                      "default": 0,
                       "markdownDescription": "Previewing the relevant code snippet of the suggestion may help you understand the usage of the suggestion. The number set indicates the number of intercepted lines in the code fragment. If it is set to `0`, this feature can be disabled.",
                       "type": "integer"
                     },
@@ -81,21 +80,57 @@
                       ],
                       "type": "string"
                     },
+                    "Lua.completion.postfix": {
+                      "default": "@",
+                      "markdownDescription": "The symbol used to trigger the postfix suggestion.",
+                      "type": "string"
+                    },
+                    "Lua.completion.requireSeparator": {
+                      "default": ".",
+                      "markdownDescription": "The separator used when `require`.",
+                      "type": "string"
+                    },
                     "Lua.completion.showParams": {
                       "default": true,
                       "markdownDescription": "Display parameters in completion list. When the function has multiple definitions, they will be displayed separately.",
                       "type": "boolean"
                     },
+                    "Lua.completion.showWord": {
+                      "default": "Fallback",
+                      "enum": [
+                        "Enable",
+                        "Fallback",
+                        "Disable"
+                      ],
+                      "markdownDescription": "Show contextual words in suggestions.",
+                      "markdownEnumDescriptions": [
+                        "Always show context words in suggestions.",
+                        "Contextual words are only displayed when suggestions based on semantics cannot be provided.",
+                        "Do not display context words."
+                      ],
+                      "type": "string"
+                    },
                     "Lua.completion.workspaceWord": {
                       "default": true,
-                      "markdownDescription": "Shows words within the workspace.",
+                      "markdownDescription": "Whether the displayed context word contains the content of other files in the workspace.",
                       "type": "boolean"
                     },
                     "Lua.diagnostics.disable": {
+                      "default": [],
                       "items": {
                         "type": "string"
                       },
-                      "markdownDescription": "Disabled diagnostic (Use code in hover brackets).\n",
+                      "markdownDescription": "Disabled diagnostic (Use code in hover brackets).",
+                      "type": "array"
+                    },
+                    "Lua.diagnostics.disableScheme": {
+                      "default": [
+                        "git"
+                      ],
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "Do not diagnose Lua files that use the following scheme.",
                       "type": "array"
                     },
                     "Lua.diagnostics.enable": {
@@ -104,22 +139,401 @@
                       "type": "boolean"
                     },
                     "Lua.diagnostics.globals": {
+                      "default": [],
                       "items": {
                         "type": "string"
                       },
-                      "markdownDescription": "Defined global variables.\n",
+                      "markdownDescription": "Defined global variables.",
                       "type": "array"
                     },
-                    "Lua.diagnostics.neededFileStatus": {
-                      "markdownDescription": "If you want to check only opened files, choice Opened; else choice Any.\n",
+                    "Lua.diagnostics.groupFileStatus": {
+                      "additionalProperties": false,
+                      "markdownDescription": "Modify the diagnostic needed file status in a group.\n\n* Opened:  only diagnose opened files\n* Any:     diagnose all files\n* None:    disable this diagnostic\n\n`Fallback` means that diagnostics in this group are controlled by `diagnostics.neededFileStatus` separately.\nOther settings will override individual settings without end of `!`.\n",
                       "properties": {
-                        "ambiguity-1": {
-                          "default": "Any",
-                          "description": "%config.diagnostics.ambiguity-1%",
+                        "ambiguity": {
+                          "default": "Fallback",
+                          "description": "* ambiguity-1\n* count-down-loop\n* different-requires\n* newfield-call\n* newline-call",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "await": {
+                          "default": "Fallback",
+                          "description": "* await-in-sync\n* not-yieldable",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "codestyle": {
+                          "default": "Fallback",
+                          "description": "* codestyle-check\n* spell-check",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "duplicate": {
+                          "default": "Fallback",
+                          "description": "* duplicate-index\n* duplicate-set-field",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "global": {
+                          "default": "Fallback",
+                          "description": "* global-in-nil-env\n* lowercase-global\n* undefined-env-child\n* undefined-global",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "luadoc": {
+                          "default": "Fallback",
+                          "description": "* cast-type-mismatch\n* circle-doc-class\n* doc-field-no-class\n* duplicate-doc-alias\n* duplicate-doc-field\n* duplicate-doc-param\n* undefined-doc-class\n* undefined-doc-name\n* undefined-doc-param\n* unknown-cast-variable\n* unknown-diag-code",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "redefined": {
+                          "default": "Fallback",
+                          "description": "* redefined-local",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "strict": {
+                          "default": "Fallback",
+                          "description": "* close-non-object\n* deprecated\n* discard-returns",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "strong": {
+                          "default": "Fallback",
+                          "description": "* no-unknown",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "type-check": {
+                          "default": "Fallback",
+                          "description": "* assign-type-mismatch\n* cast-local-type\n* cast-type-mismatch\n* need-check-nil\n* param-type-mismatch\n* undefined-field",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "unbalanced": {
+                          "default": "Fallback",
+                          "description": "* missing-parameter\n* redundant-parameter\n* redundant-value\n* unbalanced-assignments",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "unused": {
+                          "default": "Fallback",
+                          "description": "* code-after-break\n* empty-block\n* redundant-return\n* trailing-space\n* unused-function\n* unused-label\n* unused-local\n* unused-vararg",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "title": "groupFileStatus",
+                      "type": "object"
+                    },
+                    "Lua.diagnostics.groupSeverity": {
+                      "additionalProperties": false,
+                      "markdownDescription": "Modify the diagnostic severity in a group.\n`Fallback` means that diagnostics in this group are controlled by `diagnostics.severity` separately.\nOther settings will override individual settings without end of `!`.\n",
+                      "properties": {
+                        "ambiguity": {
+                          "default": "Fallback",
+                          "description": "* ambiguity-1\n* count-down-loop\n* different-requires\n* newfield-call\n* newline-call",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "await": {
+                          "default": "Fallback",
+                          "description": "* await-in-sync\n* not-yieldable",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "codestyle": {
+                          "default": "Fallback",
+                          "description": "* codestyle-check\n* spell-check",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "duplicate": {
+                          "default": "Fallback",
+                          "description": "* duplicate-index\n* duplicate-set-field",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "global": {
+                          "default": "Fallback",
+                          "description": "* global-in-nil-env\n* lowercase-global\n* undefined-env-child\n* undefined-global",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "luadoc": {
+                          "default": "Fallback",
+                          "description": "* cast-type-mismatch\n* circle-doc-class\n* doc-field-no-class\n* duplicate-doc-alias\n* duplicate-doc-field\n* duplicate-doc-param\n* undefined-doc-class\n* undefined-doc-name\n* undefined-doc-param\n* unknown-cast-variable\n* unknown-diag-code",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "redefined": {
+                          "default": "Fallback",
+                          "description": "* redefined-local",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "strict": {
+                          "default": "Fallback",
+                          "description": "* close-non-object\n* deprecated\n* discard-returns",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "strong": {
+                          "default": "Fallback",
+                          "description": "* no-unknown",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "type-check": {
+                          "default": "Fallback",
+                          "description": "* assign-type-mismatch\n* cast-local-type\n* cast-type-mismatch\n* need-check-nil\n* param-type-mismatch\n* undefined-field",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "unbalanced": {
+                          "default": "Fallback",
+                          "description": "* missing-parameter\n* redundant-parameter\n* redundant-value\n* unbalanced-assignments",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        },
+                        "unused": {
+                          "default": "Fallback",
+                          "description": "* code-after-break\n* empty-block\n* redundant-return\n* trailing-space\n* unused-function\n* unused-label\n* unused-local\n* unused-vararg",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Fallback"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "title": "groupSeverity",
+                      "type": "object"
+                    },
+                    "Lua.diagnostics.ignoredFiles": {
+                      "default": "Opened",
+                      "enum": [
+                        "Enable",
+                        "Opened",
+                        "Disable"
+                      ],
+                      "markdownDescription": "How to diagnose ignored files.",
+                      "markdownEnumDescriptions": [
+                        "Always diagnose these files.",
+                        "Only when these files are opened will it be diagnosed.",
+                        "These files are not diagnosed."
+                      ],
+                      "type": "string"
+                    },
+                    "Lua.diagnostics.libraryFiles": {
+                      "default": "Opened",
+                      "enum": [
+                        "Enable",
+                        "Opened",
+                        "Disable"
+                      ],
+                      "markdownDescription": "How to diagnose files loaded via `Lua.workspace.library`.",
+                      "markdownEnumDescriptions": [
+                        "Always diagnose these files.",
+                        "Only when these files are opened will it be diagnosed.",
+                        "These files are not diagnosed."
+                      ],
+                      "type": "string"
+                    },
+                    "Lua.diagnostics.neededFileStatus": {
+                      "additionalProperties": false,
+                      "markdownDescription": "* Opened:  only diagnose opened files\n* Any:     diagnose all files\n* None:    disable this diagnostic\n\nEnd with `!` means override the group setting `diagnostics.groupFileStatus`.\n",
+                      "properties": {
+                        "ambiguity-1": {
+                          "default": "Any",
+                          "description": "Enable ambiguous operator precedence diagnostics. For example, the `num or 0 + 1` expression will be suggested `(num or 0) + 1` instead.",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "assign-type-mismatch": {
+                          "default": "Opened",
+                          "description": "%config.diagnostics.assign-type-mismatch%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "await-in-sync": {
+                          "default": "None",
+                          "description": "%config.diagnostics.await-in-sync%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "cast-local-type": {
+                          "default": "Opened",
+                          "description": "%config.diagnostics.cast-local-type%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "cast-type-mismatch": {
+                          "default": "Any",
+                          "description": "%config.diagnostics.cast-type-mismatch%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -129,7 +543,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -139,7 +556,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -149,7 +569,23 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "codestyle-check": {
+                          "default": "None",
+                          "description": "%config.diagnostics.codestyle-check%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -159,17 +595,49 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "deprecated": {
-                          "default": "Opened",
+                          "default": "Any",
                           "description": "%config.diagnostics.deprecated%",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "different-requires": {
+                          "default": "Any",
+                          "description": "%config.diagnostics.different-requires%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "discard-returns": {
+                          "default": "Any",
+                          "description": "%config.diagnostics.discard-returns%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -179,17 +647,23 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
-                        "duplicate-doc-class": {
+                        "duplicate-doc-alias": {
                           "default": "Any",
-                          "description": "%config.diagnostics.duplicate-doc-class%",
+                          "description": "%config.diagnostics.duplicate-doc-alias%",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -199,7 +673,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -209,17 +686,23 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "duplicate-index": {
                           "default": "Any",
-                          "description": "%config.diagnostics.duplicate-index%",
+                          "description": "Enable duplicate table index diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -229,107 +712,218 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "empty-block": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.empty-block%",
+                          "description": "Enable empty code block diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "global-in-nil-env": {
                           "default": "Any",
-                          "description": "%config.diagnostics.global-in-nil-env%",
+                          "description": "Enable cannot use global variables \uff08 `_ENV` is set to `nil`\uff09 diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "lowercase-global": {
                           "default": "Any",
-                          "description": "%config.diagnostics.lowercase-global%",
+                          "description": "Enable lowercase global variable definition diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "missing-parameter": {
+                          "default": "Any",
+                          "description": "%config.diagnostics.missing-parameter%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "need-check-nil": {
+                          "default": "Opened",
+                          "description": "%config.diagnostics.need-check-nil%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "newfield-call": {
                           "default": "Any",
-                          "description": "%config.diagnostics.newfield-call%",
+                          "description": "\u5728\u5b57\u9762\u91cf\u8868\u4e2d\uff0c2\u884c\u4ee3\u7801\u4e4b\u95f4\u7f3a\u5c11\u5206\u9694\u7b26\uff0c\u5728\u8bed\u6cd5\u4e0a\u88ab\u89e3\u6790\u4e3a\u4e86\u4e00\u6b21\u7d22\u5f15\u64cd\u4f5c",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "newline-call": {
                           "default": "Any",
-                          "description": "%config.diagnostics.newline-call%",
+                          "description": "Enable newline call diagnostics. Is's raised when a line starting with `(` is encountered, which is syntactically parsed as a function call on the previous line.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
-                        "no-implicit-any": {
+                        "no-unknown": {
                           "default": "None",
-                          "description": "%config.diagnostics.no-implicit-any%",
+                          "description": "%config.diagnostics.no-unknown%",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "not-yieldable": {
+                          "default": "None",
+                          "description": "%config.diagnostics.not-yieldable%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "param-type-mismatch": {
+                          "default": "Opened",
+                          "description": "%config.diagnostics.param-type-mismatch%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "redefined-local": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.redefined-local%",
+                          "description": "Enable redefined local variable diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "redundant-parameter": {
-                          "default": "Opened",
-                          "description": "%config.diagnostics.redundant-parameter%",
+                          "default": "Any",
+                          "description": "Enable redundant function parameter diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "redundant-return": {
+                          "default": "Opened",
+                          "description": "%config.diagnostics.redundant-return%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "redundant-value": {
-                          "default": "Opened",
-                          "description": "%config.diagnostics.redundant-value%",
+                          "default": "Any",
+                          "description": "Enable the redundant values assigned diagnostics. It's raised during assignment operation, when the number of values is higher than the number of objects being assigned.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "spell-check": {
+                          "default": "None",
+                          "description": "%config.diagnostics.spell-check%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "trailing-space": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.trailing-space%",
+                          "description": "Enable trailing space diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -339,7 +933,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -349,7 +946,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -359,7 +959,10 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -369,17 +972,23 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "undefined-env-child": {
                           "default": "Any",
-                          "description": "%config.diagnostics.undefined-env-child%",
+                          "description": "Enable undefined environment variable diagnostics. It's raised when `_ENV` table is set to a new literal table, but the used global variable is no longer present in the global environment.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -389,17 +998,36 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "undefined-global": {
                           "default": "Any",
-                          "description": "%config.diagnostics.undefined-global%",
+                          "description": "Enable undefined global variable diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
+                          ],
+                          "type": "string"
+                        },
+                        "unknown-cast-variable": {
+                          "default": "Any",
+                          "description": "%config.diagnostics.unknown-cast-variable%",
+                          "enum": [
+                            "Any",
+                            "Opened",
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
@@ -409,47 +1037,62 @@
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "unused-function": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.unused-function%",
+                          "description": "Enable unused function diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "unused-label": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.unused-label%",
+                          "description": "Enable unused label diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "unused-local": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.unused-local%",
+                          "description": "Enable unused local variable diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         },
                         "unused-vararg": {
                           "default": "Opened",
-                          "description": "%config.diagnostics.unused-vararg%",
+                          "description": "Enable unused vararg diagnostics.",
                           "enum": [
                             "Any",
                             "Opened",
-                            "None"
+                            "None",
+                            "Any!",
+                            "Opened!",
+                            "None!"
                           ],
                           "type": "string"
                         }
@@ -458,16 +1101,81 @@
                       "type": "object"
                     },
                     "Lua.diagnostics.severity": {
-                      "markdownDescription": "Modified diagnostic severity.\n",
+                      "additionalProperties": false,
+                      "markdownDescription": "Modify the diagnostic severity.\n\nEnd with `!` means override the group setting `diagnostics.groupSeverity`.\n",
                       "properties": {
                         "ambiguity-1": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.ambiguity-1%",
+                          "description": "Enable ambiguous operator precedence diagnostics. For example, the `num or 0 + 1` expression will be suggested `(num or 0) + 1` instead.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "assign-type-mismatch": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.assign-type-mismatch%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "await-in-sync": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.await-in-sync%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "cast-local-type": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.cast-local-type%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "cast-type-mismatch": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.cast-type-mismatch%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -478,7 +1186,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -489,7 +1201,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -500,7 +1216,26 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "codestyle-check": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.codestyle-check%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -511,7 +1246,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -522,7 +1261,41 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "different-requires": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.different-requires%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "discard-returns": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.discard-returns%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -533,18 +1306,26 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
-                        "duplicate-doc-class": {
+                        "duplicate-doc-alias": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.duplicate-doc-class%",
+                          "description": "%config.diagnostics.duplicate-doc-alias%",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -555,7 +1336,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -566,18 +1351,26 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "duplicate-index": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.duplicate-index%",
+                          "description": "Enable duplicate table index diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -588,117 +1381,251 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "empty-block": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.empty-block%",
+                          "description": "Enable empty code block diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "global-in-nil-env": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.global-in-nil-env%",
+                          "description": "Enable cannot use global variables \uff08 `_ENV` is set to `nil`\uff09 diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "lowercase-global": {
                           "default": "Information",
-                          "description": "%config.diagnostics.lowercase-global%",
+                          "description": "Enable lowercase global variable definition diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "missing-parameter": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.missing-parameter%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "need-check-nil": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.need-check-nil%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "newfield-call": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.newfield-call%",
+                          "description": "\u5728\u5b57\u9762\u91cf\u8868\u4e2d\uff0c2\u884c\u4ee3\u7801\u4e4b\u95f4\u7f3a\u5c11\u5206\u9694\u7b26\uff0c\u5728\u8bed\u6cd5\u4e0a\u88ab\u89e3\u6790\u4e3a\u4e86\u4e00\u6b21\u7d22\u5f15\u64cd\u4f5c",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "newline-call": {
-                          "default": "Information",
-                          "description": "%config.diagnostics.newline-call%",
+                          "default": "Warning",
+                          "description": "Enable newline call diagnostics. Is's raised when a line starting with `(` is encountered, which is syntactically parsed as a function call on the previous line.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
-                        "no-implicit-any": {
-                          "default": "Information",
-                          "description": "%config.diagnostics.no-implicit-any%",
+                        "no-unknown": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.no-unknown%",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "not-yieldable": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.not-yieldable%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "param-type-mismatch": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.param-type-mismatch%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "redefined-local": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.redefined-local%",
+                          "description": "Enable redefined local variable diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "redundant-parameter": {
-                          "default": "Hint",
-                          "description": "%config.diagnostics.redundant-parameter%",
+                          "default": "Warning",
+                          "description": "Enable redundant function parameter diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "redundant-return": {
+                          "default": "Hint",
+                          "description": "%config.diagnostics.redundant-return%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "redundant-value": {
-                          "default": "Hint",
-                          "description": "%config.diagnostics.redundant-value%",
+                          "default": "Warning",
+                          "description": "Enable the redundant values assigned diagnostics. It's raised during assignment operation, when the number of values is higher than the number of objects being assigned.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "spell-check": {
+                          "default": "Information",
+                          "description": "%config.diagnostics.spell-check%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "trailing-space": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.trailing-space%",
+                          "description": "Enable trailing space diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -709,7 +1636,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -720,7 +1651,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -731,7 +1666,11 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -742,18 +1681,26 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "undefined-env-child": {
                           "default": "Information",
-                          "description": "%config.diagnostics.undefined-env-child%",
+                          "description": "Enable undefined environment variable diagnostics. It's raised when `_ENV` table is set to a new literal table, but the used global variable is no longer present in the global environment.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
@@ -764,73 +1711,116 @@
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "undefined-global": {
                           "default": "Warning",
-                          "description": "%config.diagnostics.undefined-global%",
+                          "description": "Enable undefined global variable diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
+                          ],
+                          "type": "string"
+                        },
+                        "unknown-cast-variable": {
+                          "default": "Warning",
+                          "description": "%config.diagnostics.unknown-cast-variable%",
+                          "enum": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "unknown-diag-code": {
-                          "default": "Waiting",
+                          "default": "Warning",
                           "description": "%config.diagnostics.unknown-diag-code%",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "unused-function": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.unused-function%",
+                          "description": "Enable unused function diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "unused-label": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.unused-label%",
+                          "description": "Enable unused label diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "unused-local": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.unused-local%",
+                          "description": "Enable unused local variable diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         },
                         "unused-vararg": {
                           "default": "Hint",
-                          "description": "%config.diagnostics.unused-vararg%",
+                          "description": "Enable unused vararg diagnostics.",
                           "enum": [
                             "Error",
                             "Warning",
                             "Information",
-                            "Hint"
+                            "Hint",
+                            "Error!",
+                            "Warning!",
+                            "Information!",
+                            "Hint!"
                           ],
                           "type": "string"
                         }
@@ -839,7 +1829,7 @@
                       "type": "object"
                     },
                     "Lua.diagnostics.workspaceDelay": {
-                      "default": 0,
+                      "default": 3000,
                       "markdownDescription": "Latency (milliseconds) for workspace diagnostics. When you start the workspace, or edit any file, the entire workspace will be re-diagnosed in the background. Set to negative to disable workspace diagnostics.",
                       "type": "integer"
                     },
@@ -848,15 +1838,63 @@
                       "markdownDescription": "Workspace diagnostics run rate (%). Decreasing this value reduces CPU usage, but also reduces the speed of workspace diagnostics. The diagnosis of the file you are currently editing is always done at full speed and is not affected by this setting.",
                       "type": "integer"
                     },
+                    "Lua.format.defaultConfig": {
+                      "additionalProperties": false,
+                      "default": {},
+                      "markdownDescription": "The default format configuration. Has a lower priority than `.editorconfig` file in the workspace.\nRead [formatter docs](https://github.com/CppCXY/EmmyLuaCodeStyle/tree/master/docs) to learn usage.\n",
+                      "patternProperties": {
+                        ".*": {
+                          "default": "",
+                          "type": "string"
+                        }
+                      },
+                      "title": "defaultConfig",
+                      "type": "object"
+                    },
+                    "Lua.format.enable": {
+                      "default": true,
+                      "markdownDescription": "Enable code formatter.",
+                      "type": "boolean"
+                    },
+                    "Lua.hint.arrayIndex": {
+                      "default": "Auto",
+                      "enum": [
+                        "Enable",
+                        "Auto",
+                        "Disable"
+                      ],
+                      "markdownDescription": "Show hints of array index when constructing a table.",
+                      "markdownEnumDescriptions": [
+                        "Show hints in all tables.",
+                        "Show hints only when the table is greater than 3 items, or the table is a mixed table.",
+                        "Disable hints of array index."
+                      ],
+                      "type": "string"
+                    },
+                    "Lua.hint.await": {
+                      "default": true,
+                      "markdownDescription": "If the called function is marked `---@async`, prompt `await` at the call.",
+                      "type": "boolean"
+                    },
                     "Lua.hint.enable": {
                       "default": false,
-                      "markdownDescription": "Enabel hint.",
+                      "markdownDescription": "Enable inlay hint.",
                       "type": "boolean"
                     },
                     "Lua.hint.paramName": {
-                      "default": true,
-                      "markdownDescription": "Hint parameter name when the parameter called is literal.",
-                      "type": "boolean"
+                      "default": "All",
+                      "enum": [
+                        "All",
+                        "Literal",
+                        "Disable"
+                      ],
+                      "markdownDescription": "Show hints of parameter name at the function call.",
+                      "markdownEnumDescriptions": [
+                        "All types of parameters are shown.",
+                        "Only literal type parameters are shown.",
+                        "Disable parameter hints."
+                      ],
+                      "type": "string"
                     },
                     "Lua.hint.paramType": {
                       "default": true,
@@ -865,7 +1903,7 @@
                     },
                     "Lua.hint.setType": {
                       "default": false,
-                      "markdownDescription": "Hint type at assignment operation.",
+                      "markdownDescription": "Show hints of type at assignment operation.",
                       "type": "boolean"
                     },
                     "Lua.hover.enable": {
@@ -878,8 +1916,13 @@
                       "markdownDescription": "When the value corresponds to multiple types, limit the number of types displaying.",
                       "type": "integer"
                     },
+                    "Lua.hover.expandAlias": {
+                      "default": true,
+                      "markdownDescription": "Whether to expand the alias. For example, expands `---@alias myType boolean|number` appears as `boolean|number`, otherwise it appears as `myType'.\n",
+                      "type": "boolean"
+                    },
                     "Lua.hover.previewFields": {
-                      "default": 20,
+                      "default": 50,
                       "markdownDescription": "When hovering to view a table, limits the maximum number of previews for fields.",
                       "type": "integer"
                     },
@@ -898,7 +1941,16 @@
                       "markdownDescription": "The maximum length of a hover to view the contents of a string.",
                       "type": "integer"
                     },
+                    "Lua.misc.parameters": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "[Command line parameters](https://github.com/sumneko/lua-telemetry-server/tree/master/method) when starting the language service in VSCode.",
+                      "type": "array"
+                    },
                     "Lua.runtime.builtin": {
+                      "additionalProperties": false,
                       "markdownDescription": "Adjust the enabled state of the built-in library. You can disable (or redefine) the non-existent library according to the actual runtime environment.\n\n* `default`: Indicates that the library will be enabled or disabled according to the runtime version\n* `enable`: always enable\n* `disable`: always disable\n",
                       "properties": {
                         "basic": {
@@ -1052,18 +2104,33 @@
                           "type": "string"
                         }
                       },
+                      "title": "builtin",
                       "type": "object"
                     },
                     "Lua.runtime.fileEncoding": {
                       "default": "utf8",
                       "enum": [
                         "utf8",
-                        "ansi"
+                        "ansi",
+                        "utf16le",
+                        "utf16be"
                       ],
                       "markdownDescription": "File encoding. The `ansi` option is only available under the `Windows` platform.",
+                      "markdownEnumDescriptions": [
+                        "%config.runtime.fileEncoding.utf8%",
+                        "%config.runtime.fileEncoding.ansi%",
+                        "%config.runtime.fileEncoding.utf16le%",
+                        "%config.runtime.fileEncoding.utf16be%"
+                      ],
+                      "type": "string"
+                    },
+                    "Lua.runtime.meta": {
+                      "default": "${version} ${language} ${encoding}",
+                      "markdownDescription": "Format of the directory name of the meta files.",
                       "type": "string"
                     },
                     "Lua.runtime.nonstandardSymbol": {
+                      "default": [],
                       "items": {
                         "enum": [
                           "//",
@@ -1087,14 +2154,18 @@
                     "Lua.runtime.path": {
                       "default": [
                         "?.lua",
-                        "?/init.lua",
-                        "?/?.lua"
+                        "?/init.lua"
                       ],
                       "items": {
                         "type": "string"
                       },
-                      "markdownDescription": "`package.path`",
+                      "markdownDescription": "When using `require`, how to find the file based on the input name.\nSetting this config to `?/init.lua` means that when you enter `require 'myfile'`, `${workspace}/myfile/init.lua` will be searched from the loaded files.\nif `runtime.pathStrict` is `false`, `${workspace}/**/myfile/init.lua` will also be searched.\nIf you want to load files outside the workspace, you need to set `Lua.workspace.library` first.\n",
                       "type": "array"
+                    },
+                    "Lua.runtime.pathStrict": {
+                      "default": false,
+                      "markdownDescription": "When enabled, `runtime.path` will only search the first level of directories, see the description of `runtime.path`.",
+                      "type": "boolean"
                     },
                     "Lua.runtime.plugin": {
                       "default": "",
@@ -1102,6 +2173,8 @@
                       "type": "string"
                     },
                     "Lua.runtime.special": {
+                      "additionalProperties": false,
+                      "default": {},
                       "markdownDescription": "The custom global variables are regarded as some special built-in variables, and the language server will provide special support\nThe following example shows that 'include' is treated as' require '.\n```json\n\"Lua.runtime.special\" : {\n    \"include\" : \"require\"\n}\n```\n",
                       "patternProperties": {
                         ".*": {
@@ -1115,12 +2188,15 @@
                             "dofile",
                             "loadfile",
                             "pcall",
-                            "xpcall"
+                            "xpcall",
+                            "assert",
+                            "error",
+                            "type"
                           ],
-                          "scope": "resource",
                           "type": "string"
                         }
                       },
+                      "title": "special",
                       "type": "object"
                     },
                     "Lua.runtime.unicodeName": {
@@ -1138,16 +2214,54 @@
                         "LuaJIT"
                       ],
                       "markdownDescription": "Lua runtime version.",
+                      "markdownEnumDescriptions": [
+                        "%config.runtime.version.Lua 5.1%",
+                        "%config.runtime.version.Lua 5.2%",
+                        "%config.runtime.version.Lua 5.3%",
+                        "%config.runtime.version.Lua 5.4%",
+                        "%config.runtime.version.LuaJIT%"
+                      ],
                       "type": "string"
+                    },
+                    "Lua.semantic.annotation": {
+                      "default": true,
+                      "markdownDescription": "Semantic coloring of type annotations.",
+                      "type": "boolean"
+                    },
+                    "Lua.semantic.enable": {
+                      "default": true,
+                      "markdownDescription": "Enable semantic color. You may need to set `editor.semanticHighlighting.enabled` to `true` to take effect.",
+                      "type": "boolean"
+                    },
+                    "Lua.semantic.keyword": {
+                      "default": false,
+                      "markdownDescription": "Semantic coloring of keywords/literals/operators. You only need to enable this feature if your editor cannot do syntax coloring.",
+                      "type": "boolean"
+                    },
+                    "Lua.semantic.variable": {
+                      "default": true,
+                      "markdownDescription": "Semantic coloring of variables/fields/parameters.",
+                      "type": "boolean"
                     },
                     "Lua.signatureHelp.enable": {
                       "default": true,
                       "markdownDescription": "Enable signature help.",
                       "type": "boolean"
                     },
+                    "Lua.spell.dict": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "Custom words for spell checking.",
+                      "type": "array"
+                    },
                     "Lua.telemetry.enable": {
                       "default": null,
                       "markdownDescription": "Enable telemetry to send your editor information and error logs over the network. Read our privacy policy [here](https://github.com/sumneko/lua-language-server/wiki/Privacy-Policy).\n",
+                      "tags": [
+                        "telemetry"
+                      ],
                       "type": [
                         "boolean",
                         "null"
@@ -1158,6 +2272,16 @@
                       "markdownDescription": "Show progress bar in status bar.",
                       "type": "boolean"
                     },
+                    "Lua.window.statusBar": {
+                      "default": true,
+                      "markdownDescription": "Show extension status in status bar.",
+                      "type": "boolean"
+                    },
+                    "Lua.workspace.checkThirdParty": {
+                      "default": true,
+                      "markdownDescription": "Automatic detection and adaptation of third-party libraries, currently supported libraries are:\n\n* OpenResty\n* Cocos4.0\n* L\u00d6VE\n* L\u00d6VR\n* skynet\n* Jass\n",
+                      "type": "boolean"
+                    },
                     "Lua.workspace.ignoreDir": {
                       "default": [
                         ".vscode"
@@ -1165,7 +2289,7 @@
                       "items": {
                         "type": "string"
                       },
-                      "markdownDescription": "Ignored files and directories (Use `.gitignore` grammar).\n",
+                      "markdownDescription": "Ignored files and directories (Use `.gitignore` grammar).",
                       "type": "array"
                     },
                     "Lua.workspace.ignoreSubmodules": {
@@ -1174,21 +2298,34 @@
                       "type": "boolean"
                     },
                     "Lua.workspace.library": {
+                      "default": [],
                       "items": {
                         "type": "string"
                       },
-                      "markdownDescription": "The directory path of the external function library.\nThe language service will additionally load the lua files in these directories, even if they are not in the current workspace, for definition, completion and other features.\n",
+                      "markdownDescription": "In addition to the current workspace, which directories will load files from. The files in these directories will be treated as externally provided code libraries, and some features (such as renaming fields) will not modify these files.",
                       "type": "array"
                     },
                     "Lua.workspace.maxPreload": {
-                      "default": 1000,
+                      "default": 5000,
                       "markdownDescription": "Max preloaded files.",
                       "type": "integer"
                     },
                     "Lua.workspace.preloadFileSize": {
-                      "default": 100,
+                      "default": 500,
                       "markdownDescription": "Skip files larger than this value (KB) when preloading.",
                       "type": "integer"
+                    },
+                    "Lua.workspace.supportScheme": {
+                      "default": [
+                        "file",
+                        "untitled",
+                        "git"
+                      ],
+                      "items": {
+                        "type": "string"
+                      },
+                      "markdownDescription": "Provide language server for the Lua files of the following scheme.",
+                      "type": "array"
                     },
                     "Lua.workspace.useGitIgnore": {
                       "default": true,
@@ -1196,6 +2333,7 @@
                       "type": "boolean"
                     },
                     "Lua.workspace.userThirdParty": {
+                      "default": [],
                       "items": {
                         "type": "string"
                       },

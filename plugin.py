@@ -4,6 +4,7 @@ from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.sessions import Session
 from LSP.plugin.core.typing import Any, List, Dict, Optional, Tuple
+from os import listdir, walk
 import functools
 import os
 import shutil
@@ -12,9 +13,9 @@ import tempfile
 import urllib.request
 import weakref
 import zipfile
+import tarfile
 
-URL = "https://github.com/sumneko/vscode-lua/releases/download/v{v}/vscode-lua-v{v}-{platform_arch}.vsix"
-
+URL = "https://github.com/sumneko/lua-language-server/releases/download/{v}/lua-language-server-{v}-{platform_arch}"
 
 class Lua(AbstractPlugin):
     @classmethod
@@ -32,11 +33,11 @@ class Lua(AbstractPlugin):
     @classmethod
     def platform_arch(cls) -> str:
         return {
-            "linux_x64": "linux-x64",
-            "osx_arm64": "darwin-arm64",
-            "osx_x64": "darwin-x64",
-            "windows_x32": "win32-ia32",
-            "windows_x64": "win32-x64",
+            "linux_x64": "linux-x64.tar.gz",
+            "osx_arm64": "darwin-arm64.tar.gz",
+            "osx_x64": "darwin-x64.tar.gz",
+            "windows_x32": "win32-ia32.zip",
+            "windows_x64": "win32-x64.zip",
         }[sublime.platform() + "_" + sublime.arch()]
 
     @classmethod
@@ -56,22 +57,20 @@ class Lua(AbstractPlugin):
             settings, _ = cls.configuration()
             server_version = str(settings.get("server_version"))
             with tempfile.TemporaryDirectory() as tmp:
-                # Download the VSIX file
-                zip_file = os.path.join(tmp, "lua.vsix")
-                urllib.request.urlretrieve(URL.format(v=server_version, platform_arch=cls.platform_arch()), zip_file)
-                # VSIX files are just zipfiles
-                with zipfile.ZipFile(zip_file, "r") as z:
-                    z.extractall(tmp)
-                for root, dirs, files in os.walk(os.path.join(tmp, "extension", "server", "bin")):
-                    for file in files:
-                        os.chmod(os.path.join(root, file), 0o744)
-                # Make sure package storage path exists for new users
+                downloaded_file = os.path.join(tmp, "lua-lang-download")
+                platform = cls.platform_arch()
+                urllib.request.urlretrieve(URL.format(v=server_version, platform_arch=cls.platform_arch()), downloaded_file)
+                if platform == "win32-ia32.zip" or platform == "win32-x64.zip":
+                    with zipfile.ZipFile(downloaded_file, "r") as z:
+                        z.extractall(tmp)
+                else:
+                    with tarfile.open(downloaded_file) as z:
+                        z.extractall(tmp)
                 os.makedirs(cls.storage_path(), exist_ok=True)
-                # Move the relevant subdirectory to the package storage
-                shutil.move(os.path.join(tmp, "extension", "server"), cls.basedir())
-            # Write the version stamp
+                shutil.copytree(os.path.join(tmp), cls.basedir())
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
+            shutil.rmtree(os.path.join(tmp), ignore_errors=True)
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise

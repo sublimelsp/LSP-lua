@@ -1,6 +1,6 @@
 # LSP-lua
 
-A language client for Lua. This package will download and unpack the lua-language-server in `$DATA/Package Storage/LSP-lua`.
+A language client for Lua. This package will download and unpack the [lua-language-server](https://github.com/sumneko/lua-language-server) in `$DATA/Package Storage/LSP-lua`.
 
 To use this package, you must have:
 
