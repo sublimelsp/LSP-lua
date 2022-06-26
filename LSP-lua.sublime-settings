@@ -6,8 +6,6 @@
     "command": [
         "${storage_path}/LSP-lua/bin/lua-language-server",
         "-E",
-        "-e",
-        "LANG=\"${locale}\"",
         "${storage_path}/LSP-lua/main.lua"
     ],
 
@@ -19,7 +17,7 @@
     },
 
     // The server version to download in $CACHE/Package Storage
-    "server_version": "2.5.6",
+    "server_version": "3.3.1",
 
     // Disable the trigger characters, because there's too many of them. The
     // default Lua syntax is capable enough to best decide when to trigger
