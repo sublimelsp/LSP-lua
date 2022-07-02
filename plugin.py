@@ -87,6 +87,9 @@ class Lua(AbstractPlugin):
         return {
             "platform_arch": cls.platform_arch(),
             "locale": str(settings.get("locale")),
+            "language": str(settings.get("locale")),
+            "version": str(settings.get("settings").get("Lua.runtime.version") or "Lua 5.4"),
+            "encoding": str(settings.get("settings").get("Lua.runtime.fileEncoding") or "utf8"),
             "3rd": os.path.join(cls.basedir(), "meta", "3rd")
         }
 
