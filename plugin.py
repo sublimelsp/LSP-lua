@@ -1,4 +1,5 @@
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import MarkdownLangMap
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.sessions import Session
@@ -92,6 +93,10 @@ class Lua(AbstractPlugin):
             "encoding": str(settings.get("settings").get("Lua.runtime.fileEncoding") or "utf8"),
             "3rd": os.path.join(cls.basedir(), "meta", "3rd")
         }
+
+    @classmethod
+    def markdown_language_id_to_st_syntax_map(cls) -> Optional[MarkdownLangMap]:
+        return {"lua": (("lua",), ("LSP-lua/codeblocks",))}
 
     def __init__(self, weaksession: 'weakref.ref[Session]') -> None:
         super().__init__(weaksession)
