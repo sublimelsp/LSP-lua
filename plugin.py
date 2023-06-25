@@ -2,9 +2,8 @@ from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.sessions import Session
-from LSP.plugin.core.typing import Any, List, Dict, Optional, Tuple
+from LSP.plugin.core.typing import Any, Dict, Optional, Tuple
 from distutils.dir_util import copy_tree
-from os import listdir, walk
 import functools
 import os
 import shutil

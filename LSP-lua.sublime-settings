@@ -18,7 +18,7 @@
     },
 
     // The server version to download in $CACHE/Package Storage
-    "server_version": "3.3.1",
+    "server_version": "3.6.22",
 
     // Disable the trigger characters, because there's too many of them. The
     // default Lua syntax is capable enough to best decide when to trigger
@@ -34,10 +34,14 @@
 
     // The server-specific settings
     "settings": {
+        // Whether the addon manager is enabled or not.
+        "Lua.addonManager.enable": true,
+        // Enable code lens.
+        "Lua.codeLens.enable": false,
         // When the input looks like a file name, automatically `require` this file.
         "Lua.completion.autoRequire": true,
         // Shows function call snippets.
-        // possible values: Disable, Both, Replace
+        // possible values: "Disable", "Both", "Replace"
         "Lua.completion.callSnippet": "Disable",
         // Previewing the relevant code snippet of the suggestion may help you understand the usage
         // of the suggestion. The number set indicates the number of intercepted lines in the code
@@ -46,7 +50,7 @@
         // Enable completion.
         "Lua.completion.enable": true,
         // Shows keyword syntax snippets.
-        // possible values: Disable, Both, Replace
+        // possible values: "Disable", "Both", "Replace"
         "Lua.completion.keywordSnippet": "Replace",
         // The symbol used to trigger the postfix suggestion.
         "Lua.completion.postfix": "@",
@@ -56,7 +60,7 @@
         // will be displayed separately.
         "Lua.completion.showParams": true,
         // Show contextual words in suggestions.
-        // possible values: Enable, Fallback, Disable
+        // possible values: "Enable", "Fallback", "Disable"
         "Lua.completion.showWord": "Fallback",
         // Whether the displayed context word contains the content of other files in the workspace.
         "Lua.completion.workspaceWord": true,
@@ -84,10 +88,10 @@
         // Other settings will override individual settings without end of `!`.
         "Lua.diagnostics.groupSeverity": {},
         // How to diagnose ignored files.
-        // possible values: Enable, Opened, Disable
+        // possible values: "Enable", "Opened", "Disable"
         "Lua.diagnostics.ignoredFiles": "Opened",
         // How to diagnose files loaded via `Lua.workspace.library`.
-        // possible values: Enable, Opened, Disable
+        // possible values: "Enable", "Opened", "Disable"
         "Lua.diagnostics.libraryFiles": "Opened",
         // * Opened:  only diagnose opened files
         // * Any:     diagnose all files
@@ -97,14 +101,27 @@
         // Modify the diagnostic severity.
         // End with `!` means override the group setting `diagnostics.groupSeverity`.
         "Lua.diagnostics.severity": {},
-        // Latency (milliseconds) for workspace diagnostics. When you start the workspace, or edit
-        // any file, the entire workspace will be re-diagnosed in the background. Set to negative to
-        // disable workspace diagnostics.
+        // Do not diagnose `unused-local` when the variable name matches the following pattern.
+        "Lua.diagnostics.unusedLocalExclude": [],
+        // Latency (milliseconds) for workspace diagnostics.
         "Lua.diagnostics.workspaceDelay": 3000,
+        // Set the time to trigger workspace diagnostics.
+        // possible values: "OnChange", "OnSave", "None"
+        "Lua.diagnostics.workspaceEvent": "OnSave",
         // Workspace diagnostics run rate (%). Decreasing this value reduces CPU usage, but also
         // reduces the speed of workspace diagnostics. The diagnosis of the file you are currently
         // editing is always done at full speed and is not affected by this setting.
         "Lua.diagnostics.workspaceRate": 100,
+        // Treat specific field names as package, e.g. `m_*` means `XXX.m_id` and `XXX.m_type` are
+        // package, witch can only be accessed in the file where the definition is located.
+        "Lua.doc.packageName": [],
+        // Treat specific field names as private, e.g. `m_*` means `XXX.m_id` and `XXX.m_type` are
+        // private, witch can only be accessed in the class where the definition is located.
+        "Lua.doc.privateName": [],
+        // Treat specific field names as protected, e.g. `m_*` means `XXX.m_id` and `XXX.m_type` are
+        // protected, witch can only be accessed in the class where the definition is located and
+        // its subclasses.
+        "Lua.doc.protectedName": [],
         // The default format configuration. Has a lower priority than `.editorconfig` file in the
         // workspace.
         // Read [formatter docs](https://github.com/CppCXY/EmmyLuaCodeStyle/tree/master/docs) to
@@ -113,17 +130,20 @@
         // Enable code formatter.
         "Lua.format.enable": true,
         // Show hints of array index when constructing a table.
-        // possible values: Enable, Auto, Disable
+        // possible values: "Enable", "Auto", "Disable"
         "Lua.hint.arrayIndex": "Auto",
         // If the called function is marked `---@async`, prompt `await` at the call.
         "Lua.hint.await": true,
         // Enable inlay hint.
         "Lua.hint.enable": false,
         // Show hints of parameter name at the function call.
-        // possible values: All, Literal, Disable
+        // possible values: "All", "Literal", "Disable"
         "Lua.hint.paramName": "All",
         // Show type hints at the parameter of the function.
         "Lua.hint.paramType": true,
+        // If there is no semicolon at the end of the statement, display a virtual semicolon.
+        // possible values: "All", "SameLine", "Disable"
+        "Lua.hint.semicolon": "SameLine",
         // Show hints of type at assignment operation.
         "Lua.hint.setType": false,
         // Enable hover.
@@ -142,9 +162,13 @@
         "Lua.hover.viewString": true,
         // The maximum length of a hover to view the contents of a string.
         "Lua.hover.viewStringMax": 1000,
-        // [Command line parameters](https://github.com/sumneko/lua-telemetry-
-        // server/tree/master/method) when starting the language service in VSCode.
+        // Specify the executable path in VSCode.
+        "Lua.misc.executablePath": "",
+        // [Command line parameters](https://github.com/LuaLS/lua-telemetry-server/tree/master/method)
+        // when starting the language server in VSCode.
         "Lua.misc.parameters": [],
+        // Set name style config
+        "Lua.nameStyle.config": {},
         // Adjust the enabled state of the built-in library. You can disable (or redefine) the non-
         // existent library according to the actual runtime environment.
         // * `default`: Indicates that the library will be enabled or disabled according to the
@@ -153,7 +177,7 @@
         // * `disable`: always disable
         "Lua.runtime.builtin": {},
         // File encoding. The `ansi` option is only available under the `Windows` platform.
-        // possible values: utf8, ansi, utf16le, utf16be
+        // possible values: "utf8", "ansi", "utf16le", "utf16be"
         "Lua.runtime.fileEncoding": "utf8",
         // Format of the directory name of the meta files.
         "Lua.runtime.meta": "${version} ${language} ${encoding}",
@@ -174,9 +198,10 @@
         // When enabled, `runtime.path` will only search the first level of directories, see the
         // description of `runtime.path`.
         "Lua.runtime.pathStrict": false,
-        // Plugin path. Please read [wiki](https://github.com/sumneko/lua-language-
-        // server/wiki/Plugin) to learn more.
+        // Plugin path. Please read [wiki](https://github.com/LuaLS/lua-language-server/wiki/Plugins) to learn more.
         "Lua.runtime.plugin": "",
+        // Additional arguments for the plugin.
+        "Lua.runtime.pluginArgs": [],
         // The custom global variables are regarded as some special built-in variables, and the
         // language server will provide special support
         // The following example shows that 'include' is treated as' require '.
@@ -189,7 +214,7 @@
         // Allows Unicode characters in name.
         "Lua.runtime.unicodeName": false,
         // Lua runtime version.
-        // possible values: Lua 5.1, Lua 5.2, Lua 5.3, Lua 5.4, LuaJIT
+        // possible values: "Lua 5.1", "Lua 5.2", "Lua 5.3", "Lua 5.4", "LuaJIT"
         "Lua.runtime.version": "Lua 5.4",
         // Semantic coloring of type annotations.
         "Lua.semantic.annotation": true,
@@ -205,12 +230,23 @@
         "Lua.signatureHelp.enable": true,
         // Custom words for spell checking.
         "Lua.spell.dict": [],
-        // Enable telemetry to send your editor information and error logs over the network. Read
-        // our privacy policy [here](https://github.com/sumneko/lua-language-server/wiki/Privacy-
-        // Policy).
-        "Lua.telemetry.enable": false,
+        // Allowed to assign the `number` type to the `integer` type.
+        "Lua.type.castNumberToInteger": true,
+        // When checking the type of union type, ignore the `nil` in it.
+        // When this setting is `false`, the `number|nil` type cannot be assigned to the `number`
+        // type. It can be with `true`.
+        "Lua.type.weakNilCheck": false,
+        // Once one subtype of a union type meets the condition, the union type also meets the
+        // condition.
+        // When this setting is `false`, the `number|boolean` type cannot be assigned to the
+        // `number` type. It can be with `true`.
+        "Lua.type.weakUnionCheck": false,
+        // Configures the formatting behavior while typing Lua code.
+        "Lua.typeFormat.config": {},
         // Show progress bar in status bar.
         "Lua.window.progressBar": true,
+        // Show extension status in status bar.
+        "Lua.window.statusBar": true,
         // Automatic detection and adaptation of third-party libraries, currently supported
         // libraries are:
         // * OpenResty
@@ -234,16 +270,10 @@
         "Lua.workspace.maxPreload": 5000,
         // Skip files larger than this value (KB) when preloading.
         "Lua.workspace.preloadFileSize": 500,
-        // Provide language server for the Lua files of the following scheme.
-        "Lua.workspace.supportScheme": [
-            "file",
-            "untitled",
-            "git"
-        ],
         // Ignore files list in `.gitignore` .
         "Lua.workspace.useGitIgnore": true,
         // Add private third-party library configuration file paths here, please refer to the built-
-        // in [configuration file path](https://github.com/sumneko/lua-language-
+        // in [configuration file path](https://github.com/LuaLS/lua-language-
         // server/tree/master/meta/3rd)
         "Lua.workspace.userThirdParty": [],
     }
