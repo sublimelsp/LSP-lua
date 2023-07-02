@@ -1,0 +1,15 @@
+Features:
+
+- The way embedded environments are handled has changed. Previously, you would
+  get a popup asking you to set up an environment. This was fragile. It is now
+  changed into a command that you have to run yourself. The command is available
+  in the Command Palette and is called
+
+      LSP-lua: Setup Environment
+
+  It is also available from Tools menu. Setting up the environment is essential
+  for accurate auto-completion of various frameworks that Lua is embedded in,
+  for instance OpenResty or Love2d.
+
+  For more information, see the README.md on Package Control or the github
+  repository at https://github.com/sublimelsp/LSP-lua

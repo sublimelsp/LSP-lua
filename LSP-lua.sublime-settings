@@ -180,7 +180,7 @@
         // possible values: "utf8", "ansi", "utf16le", "utf16be"
         "Lua.runtime.fileEncoding": "utf8",
         // Format of the directory name of the meta files.
-        "Lua.runtime.meta": "${version} ${language} ${encoding}",
+        "Lua.runtime.meta": "\\${version} \\${language} \\${encoding}",
         // Supports non-standard symbols. Make sure that your runtime environment supports these
         // symbols.
         "Lua.runtime.nonstandardSymbol": [],
@@ -255,7 +255,7 @@
         // * LÖVR
         // * skynet
         // * Jass
-        "Lua.workspace.checkThirdParty": true,
+        "Lua.workspace.checkThirdParty": false,
         // Ignored files and directories (Use `.gitignore` grammar).
         "Lua.workspace.ignoreDir": [
             ".vscode"
@@ -273,8 +273,7 @@
         // Ignore files list in `.gitignore` .
         "Lua.workspace.useGitIgnore": true,
         // Add private third-party library configuration file paths here, please refer to the built-
-        // in [configuration file path](https://github.com/LuaLS/lua-language-
-        // server/tree/master/meta/3rd)
+        // in [configuration file path](https://github.com/LuaLS/lua-language-server/tree/master/meta/3rd)
         "Lua.workspace.userThirdParty": [],
     }
 }
