@@ -18,7 +18,7 @@
     },
 
     // The server version to download in $CACHE/Package Storage
-    "server_version": "3.6.22",
+    "server_version": "3.7.3",
 
     // Disable the trigger characters, because there's too many of them. The
     // default Lua syntax is capable enough to best decide when to trigger
@@ -255,7 +255,8 @@
         // * LÖVR
         // * skynet
         // * Jass
-        "Lua.workspace.checkThirdParty": true,
+        // possible values: false, true, "Ask", "Apply", "ApplyInMemory", "Disable"
+        "Lua.workspace.checkThirdParty": "Ask",
         // Ignored files and directories (Use `.gitignore` grammar).
         "Lua.workspace.ignoreDir": [
             ".vscode"

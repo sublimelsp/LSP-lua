@@ -14,7 +14,7 @@ import weakref
 import zipfile
 import tarfile
 
-URL = "https://github.com/sumneko/lua-language-server/releases/download/{v}/lua-language-server-{v}-{platform_arch}"
+URL = "https://github.com/LuaLS/lua-language-server/releases/download/{v}/lua-language-server-{v}-{platform_arch}"
 
 class Lua(AbstractPlugin):
     @classmethod
