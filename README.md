@@ -12,7 +12,23 @@ This language server operates on files with the `source.lua` base scope.
 
 # Configuration
 
-Run `Preferences: LSP-lua Settings` from the Command Palette.
+Run `Preferences: LSP-lua Settings` from the Command Palette to tweak the settings.
+
+# Embedded Environment
+
+Lua is an embeddable language. This means it is usually part of a larger application, like [OpenResty](https://openresty.org/en/) or [LÖVE](https://love2d.org/). This language server has a few built-in third-party environments ready for use. The environment is set up via sublime project settings. As such, if you want to persist these settings you need to use a [.sublime-project](https://www.sublimetext.com/docs/projects.html) file. This project file can be created automatically by clicking on
+
+    Project > Save Project As...
+
+You can choose one of the built-in environments by running the command
+
+    LSP-lua: Setup Environment
+
+from the Command Palette.
+
+To set up an environment that is not provided by the language server itself, you will need to modify the `Lua.workspace.userThirdParty` server setting.
+
+Setting up the right embedded environment is essential for accurate auto-completion.
 
 # Locale
 
