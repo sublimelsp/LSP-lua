@@ -6,7 +6,7 @@ from LSP.plugin.core.typing import Any, Dict, List, Optional, Tuple  # noqa: F40
 from distutils.dir_util import copy_tree
 import os
 import shutil
-from LSP.plugin.core.views import KIND_PACKAGE
+from LSP.plugin.core.constants import KIND_PACKAGE
 import sublime
 import tempfile
 import urllib.request
