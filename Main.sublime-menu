@@ -1,5 +1,16 @@
 [
   {
+    "id": "tools",
+    "children":
+    [
+      {
+        "id": "lsp-lua",
+        "caption": "LSP-lua: Setup Environment",
+        "command": "lsp_lua_setup_environment"
+      }
+    ]
+  },
+  {
     "id": "preferences",
     "children": [
       {
@@ -20,7 +31,7 @@
                     "command": "edit_settings",
                     "args": {
                       "base_file": "${packages}/LSP-lua/LSP-lua.sublime-settings",
-                      "default": "// Settings in here override those in \"LSP-lua/LSP-lua.sublime-settings\"\n\n{\n\t$0\n}\n",
+                      "default": "// Settings in here override those in \"LSP-lua/LSP-lua.sublime-settings\"\n{\n\t$0\n}\n",
                     }
                   }
                 ]
