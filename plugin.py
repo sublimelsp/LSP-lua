@@ -3,7 +3,6 @@ from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.sessions import Session
 from LSP.plugin.core.typing import Any, Dict, Optional, Tuple
-from distutils.dir_util import copy_tree
 import functools
 import os
 import shutil
@@ -55,21 +54,21 @@ class Lua(AbstractPlugin):
         try:
             settings, _ = cls.configuration()
             server_version = str(settings.get("server_version"))
-            with tempfile.TemporaryDirectory() as tmp:
-                downloaded_file = os.path.join(tmp, "lua-lang-download")
+            with tempfile.TemporaryDirectory() as tempdir:
+                downloaded_file = os.path.join(tempdir, "lua-lang-download")
                 platform = cls.platform_arch()
                 urllib.request.urlretrieve(URL.format(v=server_version, platform_arch=cls.platform_arch()), downloaded_file)
                 if platform == "win32-ia32.zip" or platform == "win32-x64.zip":
                     with zipfile.ZipFile(downloaded_file, "r") as z:
-                        z.extractall(tmp)
+                        z.extractall(tempdir)
                 else:
                     with tarfile.open(downloaded_file) as z:
-                        z.extractall(tmp)
+                        z.extractall(tempdir)
                 os.makedirs(cls.storage_path(), exist_ok=True)
-                copy_tree(os.path.join(tmp), cls.basedir())
+                shutil.move(tempdir, cls.basedir())
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
-            shutil.rmtree(os.path.join(tmp), ignore_errors=True)
+            shutil.rmtree(os.path.join(tempdir), ignore_errors=True)
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise
