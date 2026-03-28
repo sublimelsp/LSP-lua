@@ -1,24 +1,27 @@
+from __future__ import annotations
+
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import notification_handler
 from LSP.plugin import register_plugin
+from LSP.plugin import Session
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.sessions import Session
-from LSP.plugin.core.typing import Any, Dict, Optional, Tuple
+from typing import Any
 import functools
 import os
 import shutil
 import sublime
+import tarfile
 import tempfile
 import urllib.request
 import weakref
 import zipfile
-import tarfile
 
 URL = "https://github.com/LuaLS/lua-language-server/releases/download/{v}/lua-language-server-{v}-{platform_arch}"
 
 class Lua(AbstractPlugin):
     @classmethod
     def name(cls) -> str:
-        return "LSP-{}".format(cls.__name__.lower())
+        return f"LSP-{cls.__name__.lower()}"
 
     @classmethod
     def basedir(cls) -> str:
@@ -74,13 +77,13 @@ class Lua(AbstractPlugin):
             raise
 
     @classmethod
-    def configuration(cls) -> Tuple[sublime.Settings, str]:
-        base_name = "{}.sublime-settings".format(cls.name())
-        file_path = "Packages/{}/{}".format(cls.name(), base_name)
+    def configuration(cls) -> tuple[sublime.Settings, str]:
+        base_name = f"{cls.name()}.sublime-settings"
+        file_path = f"Packages/{cls.name()}/{base_name}"
         return sublime.load_settings(base_name), file_path
 
     @classmethod
-    def additional_variables(cls) -> Optional[Dict[str, str]]:
+    def additional_variables(cls) -> dict[str, str] | None:
         settings, _ = cls.configuration()
         return {
             "platform_arch": cls.platform_arch(),
@@ -91,15 +94,15 @@ class Lua(AbstractPlugin):
             "3rd": os.path.join(cls.basedir(), "meta", "3rd")
         }
 
-    def __init__(self, weaksession: 'weakref.ref[Session]') -> None:
+    def __init__(self, weaksession: weakref.ref[Session]) -> None:
         super().__init__(weaksession)
         self._settings_change_count = 0
-        self._queued_changes = []  # type: List[Dict[str, Any]]
+        self._queued_changes: list[dict[str, Any]] = []
 
-    def m___command(self, params: Any) -> None:
-        """Handles the $/command notification."""
+    @notification_handler("$/command")
+    def on_command(self, params: Any) -> None:
         if not isinstance(params, dict):
-            return print("{}: cannot handle command: expected dict, got {}".format(self.name(), type(params)))
+            return print(f"{self.name()}: cannot handle command: expected dict, got {type(params)}")
         command = params["command"]
         if command == "lua.config":
             self._queued_changes.extend(params["data"])
@@ -107,7 +110,7 @@ class Lua(AbstractPlugin):
             current_count = self._settings_change_count
             sublime.set_timeout_async(functools.partial(self._handle_config_commands_async, current_count), 200)
         else:
-            sublime.error_message("LSP-lua: unrecognized command: {}".format(command))
+            sublime.error_message(f"LSP-lua: unrecognized command: {command}")
 
     def _handle_config_commands_async(self, settings_change_count: int) -> None:
         if self._settings_change_count != settings_change_count:
@@ -135,13 +138,13 @@ class Lua(AbstractPlugin):
                 print("LSP-lua: unrecognized action:", action)
         session.window.set_project_data(base)
         if not session.window.project_file_name():
-            sublime.message_dialog(" ".join((
-                "The server settings have been applied in the Window,",
-                "but this Window is not backed by a .sublime-project.",
+            sublime.message_dialog((  # noqa: UP034
+                "The server settings have been applied in the Window, "
+                "but this Window is not backed by a .sublime-project. "
                 "Click on Project > Save Project As... to store the settings."
-            )))
+            ))
 
-    def _get_server_settings(self, window: sublime.Window) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
+    def _get_server_settings(self, window: sublime.Window) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         data = window.project_data()
         if not isinstance(data, dict):
             return None, None
