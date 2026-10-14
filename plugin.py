@@ -28,12 +28,12 @@ class Lua(LspPlugin):
         context.variables.update(cls.additional_variables(configuration))
 
     @classmethod
-    def basedir(cls) -> str:
+    def storage_path(cls) -> str:
         return str(cls.plugin_storage_path)
 
     @classmethod
     def version_file(cls) -> str:
-        return os.path.join(cls.basedir(), "VERSION")
+        return os.path.join(cls.storage_path(), "VERSION")
 
     @classmethod
     def platform_arch(cls) -> str:
@@ -55,7 +55,7 @@ class Lua(LspPlugin):
 
     @classmethod
     def install_or_update(cls, server_version: str) -> None:
-        shutil.rmtree(cls.basedir(), ignore_errors=True)
+        shutil.rmtree(cls.storage_path(), ignore_errors=True)
         try:
             with tempfile.TemporaryDirectory() as tempdir:
                 downloaded_file = os.path.join(tempdir, "lua-lang-download")
@@ -67,13 +67,13 @@ class Lua(LspPlugin):
                 else:
                     with tarfile.open(downloaded_file) as z:
                         z.extractall(tempdir)
-                os.makedirs(os.path.dirname(cls.basedir()), exist_ok=True)
-                shutil.move(tempdir, cls.basedir())
+                os.makedirs(os.path.dirname(cls.storage_path()), exist_ok=True)
+                shutil.move(tempdir, cls.storage_path())
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
             shutil.rmtree(os.path.join(tempdir), ignore_errors=True)
         except Exception:
-            shutil.rmtree(cls.basedir(), ignore_errors=True)
+            shutil.rmtree(cls.storage_path(), ignore_errors=True)
             raise
 
     @classmethod
@@ -85,7 +85,7 @@ class Lua(LspPlugin):
             "language": locale,
             "version": str(configuration.settings.get("Lua.runtime.version") or "Lua 5.4"),
             "encoding": str(configuration.settings.get("Lua.runtime.fileEncoding") or "utf8"),
-            "3rd": os.path.join(cls.basedir(), "meta", "3rd")
+            "3rd": os.path.join(cls.storage_path(), "meta", "3rd")
         }
 
     def __init__(self, weaksession: weakref.ref[Session]) -> None:
