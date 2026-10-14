@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from LSP.plugin import AbstractPlugin
+from LSP.plugin import ClientConfig
+from LSP.plugin import LspPlugin
 from LSP.plugin import notification_handler
-from LSP.plugin import register_plugin
+from LSP.plugin import OnPreStartContext
 from LSP.plugin import Session
-from LSP.plugin import unregister_plugin
 from typing import Any
 import functools
 import os
@@ -18,18 +18,22 @@ import zipfile
 
 URL = "https://github.com/LuaLS/lua-language-server/releases/download/{v}/lua-language-server-{v}-{platform_arch}"
 
-class Lua(AbstractPlugin):
+class Lua(LspPlugin):
     @classmethod
-    def name(cls) -> str:
-        return f"LSP-{cls.__name__.lower()}"
+    def on_pre_start_async(cls, context: OnPreStartContext) -> None:
+        configuration = context.configuration
+        server_version = str(configuration.root_settings.get("server_version"))
+        if cls.needs_update_or_installation(server_version):
+            cls.install_or_update(server_version)
+        context.variables.update(cls.additional_variables(configuration))
 
     @classmethod
-    def basedir(cls) -> str:
-        return os.path.join(cls.storage_path(), cls.name())
+    def storage_path(cls) -> str:
+        return str(cls.plugin_storage_path)
 
     @classmethod
     def version_file(cls) -> str:
-        return os.path.join(cls.basedir(), "VERSION")
+        return os.path.join(cls.storage_path(), "VERSION")
 
     @classmethod
     def platform_arch(cls) -> str:
@@ -42,9 +46,7 @@ class Lua(AbstractPlugin):
         }[sublime.platform() + "_" + sublime.arch()]
 
     @classmethod
-    def needs_update_or_installation(cls) -> bool:
-        settings, _ = cls.configuration()
-        server_version = str(settings.get("server_version"))
+    def needs_update_or_installation(cls, server_version: str) -> bool:
         try:
             with open(cls.version_file(), "r") as fp:
                 return server_version != fp.read().strip()
@@ -52,11 +54,9 @@ class Lua(AbstractPlugin):
             return True
 
     @classmethod
-    def install_or_update(cls) -> None:
-        shutil.rmtree(cls.basedir(), ignore_errors=True)
+    def install_or_update(cls, server_version: str) -> None:
+        shutil.rmtree(cls.storage_path(), ignore_errors=True)
         try:
-            settings, _ = cls.configuration()
-            server_version = str(settings.get("server_version"))
             with tempfile.TemporaryDirectory() as tempdir:
                 downloaded_file = os.path.join(tempdir, "lua-lang-download")
                 platform = cls.platform_arch()
@@ -67,31 +67,25 @@ class Lua(AbstractPlugin):
                 else:
                     with tarfile.open(downloaded_file) as z:
                         z.extractall(tempdir)
-                os.makedirs(cls.storage_path(), exist_ok=True)
-                shutil.move(tempdir, cls.basedir())
+                os.makedirs(os.path.dirname(cls.storage_path()), exist_ok=True)
+                shutil.move(tempdir, cls.storage_path())
             with open(cls.version_file(), "w") as fp:
                 fp.write(server_version)
             shutil.rmtree(os.path.join(tempdir), ignore_errors=True)
         except Exception:
-            shutil.rmtree(cls.basedir(), ignore_errors=True)
+            shutil.rmtree(cls.storage_path(), ignore_errors=True)
             raise
 
     @classmethod
-    def configuration(cls) -> tuple[sublime.Settings, str]:
-        base_name = f"{cls.name()}.sublime-settings"
-        file_path = f"Packages/{cls.name()}/{base_name}"
-        return sublime.load_settings(base_name), file_path
-
-    @classmethod
-    def additional_variables(cls) -> dict[str, str] | None:
-        settings, _ = cls.configuration()
+    def additional_variables(cls, configuration: ClientConfig) -> dict[str, str]:
+        locale = str(configuration.root_settings.get("locale"))
         return {
             "platform_arch": cls.platform_arch(),
-            "locale": str(settings.get("locale")),
-            "language": str(settings.get("locale")),
-            "version": str(settings.get("settings").get("Lua.runtime.version") or "Lua 5.4"),
-            "encoding": str(settings.get("settings").get("Lua.runtime.fileEncoding") or "utf8"),
-            "3rd": os.path.join(cls.basedir(), "meta", "3rd")
+            "locale": locale,
+            "language": locale,
+            "version": str(configuration.settings.get("Lua.runtime.version") or "Lua 5.4"),
+            "encoding": str(configuration.settings.get("Lua.runtime.fileEncoding") or "utf8"),
+            "3rd": os.path.join(cls.storage_path(), "meta", "3rd")
         }
 
     def __init__(self, weaksession: weakref.ref[Session]) -> None:
@@ -102,7 +96,7 @@ class Lua(AbstractPlugin):
     @notification_handler("$/command")
     def on_command(self, params: Any) -> None:
         if not isinstance(params, dict):
-            return print(f"{self.name()}: cannot handle command: expected dict, got {type(params)}")
+            return print(f"{self.name}: cannot handle command: expected dict, got {type(params)}")
         command = params["command"]
         if command == "lua.config":
             self._queued_changes.extend(params["data"])
@@ -160,8 +154,8 @@ class Lua(AbstractPlugin):
 
 
 def plugin_loaded() -> None:
-    register_plugin(Lua)
+    Lua.register()
 
 
 def plugin_unloaded() -> None:
-    unregister_plugin(Lua)
+    Lua.unregister()

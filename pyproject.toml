@@ -1,19 +1,10 @@
 [tool.pyright]
-pythonVersion = '3.8'
-reportAny = "none"
-reportExplicitAny = "none"
-reportImplicitOverride = "none"
-reportIncompatibleMethodOverride = "none"
-reportMissingModuleSource = "none"
-reportUnannotatedClassAttribute = "none"
-reportUnknownArgumentType = "none"
-reportUnknownMemberType = "none"
-reportUnknownVariableType = "none"
-reportUnusedCallResult = "none"
+pythonVersion = "3.8"
+typeCheckingMode = "standard"
 
 [tool.ruff]
 line-length = 120
-target-version = 'py38'
+target-version = "py38"
 
 [tool.ruff.format]
 quote-style = "preserve"
